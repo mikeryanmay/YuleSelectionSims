@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --partition=med2
 #SBATCH --account=brannalagrp
-#SBATCH --job-name=factor_1_size_10
+#SBATCH --job-name=scenario_1_size_1000
 #SBATCH --mail-user=mikeryanmay@gmail.edu
 #SBATCH --mail-type=ALL
 #SBATCH --output=log/job_%a.out
@@ -11,7 +11,7 @@
 #SBATCH --time=72:00:00
 
 # change to user directory
-cd /home/$USER/YuleSelectionSims/simulations/single_site/factor_1_size_10/
+cd /home/$USER/YuleSelectionSims/simulations/single_site/scenario_1_size_1000/
 
 # load the module
 module load R
