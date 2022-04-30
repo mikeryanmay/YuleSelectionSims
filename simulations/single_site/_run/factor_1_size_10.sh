@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL
 #SBATCH --nodes=1
 #SBATCH --ntasks=24
-#SBATCH --time=48:00:00
+#SBATCH --time=24:00:00
 
 # change to user directory
 cd /home/$USER/YuleSelectionSims/simulations/single_site/factor_1_size_10/
