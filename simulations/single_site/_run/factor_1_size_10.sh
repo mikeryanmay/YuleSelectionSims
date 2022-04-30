@@ -11,6 +11,9 @@
 # change to user directory
 cd /home/$USER/YuleSelectionSims/simulations/single_site/factor_1_size_10/
 
+# load the module
+module load R
+
 # make the output directory
 mkdir -p logs
 
