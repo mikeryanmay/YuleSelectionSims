@@ -12,7 +12,7 @@
 cd /home/$USER/YuleSelectionSims/simulations/single_site/factor_1_size_10/
 
 # make the output directory
-mkdir -p log
+mkdir -p logs
 
 # run your code
 parallel -j $SLURM_CPUS_ON_NODE "Rscript ../../../src/analysis.R {%} > 'logs/rep_{}.txt'" ::: {1..100}
