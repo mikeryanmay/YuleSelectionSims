@@ -8,7 +8,7 @@
 #SBATCH --error=log/job_%a.out
 #SBATCH --nodes=1
 #SBATCH --ntasks=24
-#SBATCH --time=72:00:00
+#SBATCH --time=12:00:00
 
 # change to user directory
 cd /home/$USER/YuleSelectionSims/simulations/single_site/factor_3_size_1000/
@@ -18,3 +18,6 @@ module load R
 
 # run the analyses
 parallel -j $SLURM_CPUS_ON_NODE "Rscript ../../../src/analysis.R {%}" ::: {1..100}
+
+# wait for all tasks to complete
+wait
