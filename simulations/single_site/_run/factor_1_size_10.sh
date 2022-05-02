@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --partition=high2
+#SBATCH --partition=med2
 #SBATCH --account=brannalagrp
 #SBATCH --job-name=factor_1_size_10
 #SBATCH --mail-user=mikeryanmay@gmail.edu
