@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --partition=med2
+#SBATCH --partition=high2
 #SBATCH --account=brannalagrp
 #SBATCH --job-name=factor_1_size_10
 #SBATCH --mail-user=mikeryanmay@gmail.edu
@@ -8,7 +8,7 @@
 #SBATCH --error=log/job_%a.out
 #SBATCH --nodes=1
 #SBATCH --ntasks=24
-#SBATCH --time=72:00:00
+#SBATCH --time=24:00:00
 
 # change to user directory
 cd /home/$USER/YuleSelectionSims/simulations/single_site/factor_1_size_10/
@@ -18,3 +18,6 @@ module load R
 
 # run the analyses
 parallel -j $SLURM_CPUS_ON_NODE "Rscript ../../../src/analysis.R {%}" ::: {1..100}
+
+# wait for all tasks to complete
+wait
