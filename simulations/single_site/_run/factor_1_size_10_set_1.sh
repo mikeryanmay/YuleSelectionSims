@@ -40,3 +40,7 @@ Rscript ../../../src/analysis.R 20 ;
 
 # wait for all tasks to complete
 wait;
+
+# move log file
+mkdir -p log
+mv "slurm-${SLURM_JOB_ID}.out" "log/slurm-${SLURM_JOB_ID}.out"
