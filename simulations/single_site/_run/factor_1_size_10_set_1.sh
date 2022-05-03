@@ -4,8 +4,6 @@
 #SBATCH --job-name=factor_1_size_10_set_1
 #SBATCH --mail-user=mikeryanmay@gmail.com
 #SBATCH --mail-type=ALL
-#SBATCH --output=log/job_%a.out
-#SBATCH --error=log/job_%a.out
 #SBATCH --nodes=1
 #SBATCH --ntasks=20
 #SBATCH --time=12:00:00
