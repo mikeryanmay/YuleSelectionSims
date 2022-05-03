@@ -3,7 +3,7 @@
 #SBATCH --account=brannalagrp
 #SBATCH --job-name=factor_1_size_10_set_1
 #SBATCH --mail-user=mikeryanmay@gmail.com
-#SBATCH --mail-type=ALL
+#SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --nodes=1
 #SBATCH --ntasks=20
 #SBATCH --time=12:00:00

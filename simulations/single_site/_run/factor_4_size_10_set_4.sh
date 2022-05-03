@@ -3,9 +3,7 @@
 #SBATCH --account=brannalagrp
 #SBATCH --job-name=factor_4_size_10_set_4
 #SBATCH --mail-user=mikeryanmay@gmail.com
-#SBATCH --mail-type=ALL
-#SBATCH --output=log/job_%a.out
-#SBATCH --error=log/job_%a.out
+#SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --nodes=1
 #SBATCH --ntasks=20
 #SBATCH --time=12:00:00
@@ -40,3 +38,7 @@ Rscript ../../../src/analysis.R 80 ;
 
 # wait for all tasks to complete
 wait;
+
+# move log file
+mkdir -p log
+mv "slurm-${SLURM_JOB_ID}.out" "log/slurm-${SLURM_JOB_ID}.out"
