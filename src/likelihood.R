@@ -18,6 +18,80 @@ drop.extinct <- function (phy, tol = NULL) {
     return(phy)
 }
 
+is.extinct <- function (phy, tol = NULL) {
+    if (!"phylo" %in% class(phy)) {
+        stop("\"phy\" is not of class \"phylo\".")
+    }
+    if (is.null(phy$edge.length)) {
+        stop("\"phy\" does not have branch lengths.")
+    }
+    if (is.null(tol)) {
+        tol <- min(phy$edge.length)/100
+    }
+    phy <- reorder(phy)
+    xx <- numeric(Ntip(phy) + phy$Nnode)
+    for (i in 1:length(phy$edge[, 1])) {
+        xx[phy$edge[i, 2]] <- xx[phy$edge[i, 1]] + phy$edge.length[i]
+    }
+    aa <- max(xx[1:Ntip(phy)]) - xx[1:Ntip(phy)] > tol
+    if (any(aa)) {
+        return(phy$tip.label[which(aa)])
+    }
+    else {
+        return(NULL)
+    }
+}
+
+.drop.tip <- function (phy, tip, trim.internal = TRUE, subtree = FALSE, root.edge = 0,
+    rooted = is.rooted(phy))
+{
+    if (missing(tip))
+        return(phy)
+    if (is.character(tip))
+        tip <- which(phy$tip.label %in% tip)
+    if (!length(tip))
+        return(phy)
+    phy = as.phylo(phy)
+    Ntip <- length(phy$tip.label)
+    tip = tip[tip %in% c(1:Ntip)]
+    if (!length(tip))
+        return(phy)
+    phy <- reorder(phy)
+    NEWROOT <- ROOT <- Ntip + 1
+    Nnode <- phy$Nnode
+    Nedge <- nrow(phy$edge)
+    wbl <- !is.null(phy$edge.length)
+    edge1 <- phy$edge[, 1]
+    edge2 <- phy$edge[, 2]
+    keep <- !(edge2 %in% tip)
+    ints <- edge2 > Ntip
+    repeat {
+        sel <- !(edge2 %in% edge1[keep]) & ints & keep
+        if (!sum(sel))
+            break
+        keep[sel] <- FALSE
+    }
+    phy2 <- phy
+    phy2$edge <- phy2$edge[keep, ]
+    if (wbl)
+        phy2$edge.length <- phy2$edge.length[keep]
+    TERMS <- !(phy2$edge[, 2] %in% phy2$edge[, 1])
+    oldNo.ofNewTips <- phy2$edge[TERMS, 2]
+    n <- length(oldNo.ofNewTips)
+    idx.old <- phy2$edge[TERMS, 2]
+    phy2$edge[TERMS, 2] <- rank(phy2$edge[TERMS, 2])
+    phy2$tip.label <- phy2$tip.label[-tip]
+    if (!is.null(phy2$node.label))
+        phy2$node.label <- phy2$node.label[sort(unique(phy2$edge[,
+            1])) - Ntip]
+    phy2$Nnode <- nrow(phy2$edge) - n + 1L
+    i <- phy2$edge > n
+    phy2$edge[i] <- match(phy2$edge[i], sort(unique(phy2$edge[i]))) +
+        n
+    storage.mode(phy2$edge) <- "integer"
+    collapse.singles(phy2)
+}
+
 makeYuleRateMatrix <- function(S, lambda0, delta, phi, gamma) {
 
   # get the number of sites
