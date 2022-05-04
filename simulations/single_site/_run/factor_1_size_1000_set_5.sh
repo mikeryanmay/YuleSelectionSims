@@ -3,10 +3,10 @@
 #SBATCH --account=brannalagrp
 #SBATCH --job-name=factor_1_size_1000_set_5
 #SBATCH --mail-user=mikeryanmay@gmail.com
-#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-type=FAIL
 #SBATCH --nodes=1
 #SBATCH --ntasks=20
-#SBATCH --time=12:00:00
+#SBATCH --time=24:00:00
 
 # change to user directory
 cd /home/$USER/YuleSelectionSims/simulations/single_site/factor_1_size_1000/
@@ -39,6 +39,4 @@ Rscript ../../../src/analysis.R 100 ;
 # wait for all tasks to complete
 wait;
 
-# move log file
-mkdir -p log
-mv "slurm-${SLURM_JOB_ID}.out" "log/slurm-${SLURM_JOB_ID}.out"
+# DONE

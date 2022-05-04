@@ -1,3 +1,5 @@
+# RUN FROM simulations/single_site
+
 # enumerate the analyses
 sims <- c("factor_1", "factor_2", "factor_3", "factor_4", "scenario_1", "scenario_2", "scenario_3")
 size <- c(10, 100, 1000)
