@@ -1,0 +1,268 @@
+==========================================
+SLURM_JOB_ID = 48021435
+SLURM_NODELIST = c6-94
+==========================================
+Module R/3.6.3 loaded
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |                                        |   0%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |==                                      |   5%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |                                        |   0%  |                                                |==                                      |   5%  |                                                |==                                      |   5%  |                                                |=                                       |   2%  |                                                |==                                      |   5%  |                                                |==                                      |   5%  |                                                |==                                      |   5%  |                                                |==                                      |   5%  |                                                |==                                      |   5%  |                                                |==                                      |   5%  |                                                |==                                      |   5%  |                                                |===                                     |   8%  |                                                |===                                     |   8%  |                                                |==                                      |   5%  |                                                |==                                      |   5%  |                                                |===                                     |   8%  |                                                |                                        |   0%  |                                                |===                                     |   8%  |                                                |===                                     |   8%  |                                                |===                                     |   8%  |                                                |                                        |   0%  |                                                |===                                     |   8%  |                                                |===                                     |   8%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |===                                     |   8%  |                                                |==                                      |   5%  |                                                |===                                     |   8%  |                                                |===                                     |   8%  |                                                |===                                     |   8%  |                                                |====                                    |  10%  |                                                |====                                    |  10%  |                                                |==                                      |   5%  |                                                |=                                       |   2%  |                                                |====                                    |  10%  |                                                |====                                    |  10%  |                                                |===                                     |   8%  |                                                |====                                    |  10%  |                                                |====                                    |  10%  |                                                |====                                    |  10%  |                                                |====                                    |  10%  |                                                |====                                    |  10%  |                                                |=====                                   |  12%  |                                                |====                                    |  10%  |                                                |=====                                   |  12%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |====                                    |  10%  |                                                |=                                       |   2%  |                                                |=====                                   |  12%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |====                                    |  10%slurmstepd: error: *** JOB 48021435 ON c6-94 CANCELLED AT 2022-05-04T10:07:21 ***
+Name                : scenario_2_size_10_set_2
+User                : mrmay
+Account             : brannalagrp
+Partition           : med2
+Nodes               : c6-94
+Cores               : 20
+GPUs                : 0
+State               : CANCELLED by 512902,CANCELLED
+ExitCode            : 0:0
+Submit              : 2022-05-04T10:05:27
+Start               : 2022-05-04T10:05:50
+End                 : 2022-05-04T10:07:21
+Waited              :   00:00:23
+Reserved walltime   : 1-00:00:00
+Used walltime       :   00:01:31
+Used CPU time       :   00:00:00
+% User (Computation): --
+% System (I/O)      : --
+Mem reserved        : 20000M
+Max Mem used        : 0.00  (c6-94)
+Max Disk Write      : 0.00  (c6-94)
+Max Disk Read       : 0.00  (c6-94)

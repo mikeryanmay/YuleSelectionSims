@@ -1,0 +1,268 @@
+==========================================
+SLURM_JOB_ID = 48021425
+SLURM_NODELIST = c6-97
+==========================================
+Module R/3.6.3 loaded
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+Loading required package: Matrix
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+
+Attaching package: ‘expm’
+
+The following object is masked from ‘package:Matrix’:
+
+    expm
+
+The following object is masked from ‘package:ape’:
+
+    balance
+
+  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%slurmstepd: error: *** JOB 48021425 ON c6-97 CANCELLED AT 2022-05-04T10:07:21 ***
+Name                : scenario_2_size_1000_set_2
+User                : mrmay
+Account             : brannalagrp
+Partition           : med2
+Nodes               : c6-97
+Cores               : 20
+GPUs                : 0
+State               : CANCELLED by 512902,CANCELLED
+ExitCode            : 0:0
+Submit              : 2022-05-04T10:05:26
+Start               : 2022-05-04T10:05:38
+End                 : 2022-05-04T10:07:21
+Waited              :   00:00:12
+Reserved walltime   : 1-00:00:00
+Used walltime       :   00:01:43
+Used CPU time       :   00:00:00
+% User (Computation): --
+% System (I/O)      : --
+Mem reserved        : 20000M
+Max Mem used        : 0.00  (c6-97)
+Max Disk Write      : 0.00  (c6-97)
+Max Disk Read       : 0.00  (c6-97)
