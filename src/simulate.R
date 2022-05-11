@@ -2,6 +2,196 @@ library(ape)
 library(phangorn)
 library(parallel)
 
+simulateYuleSelection <- function(S, lambda0, delta, phi, gamma, n, min_num_gains = 1) {
+  
+  num_gains <- 0
+  while (num_gains < min_num_gains) {
+    
+    sim <- NULL
+    while ( is.null(sim) ) {
+      sim <- simulateYuleSelectionTree(S, lambda0, delta, phi, gamma, n)  
+    }
+    
+    num_gains <- sim$num_gains
+    
+  }
+  
+  # done
+  return(sim)
+    
+}
+
+simulateYuleSelectionTree <- function(S, lambda0, delta, phi, gamma, n) {
+  
+  # get the number of sites
+  num_sites <- length(S)
+  
+  # enumerate all state combinations
+  state_combos <- expand.grid(lapply(1:num_sites, function(x) c("A","C","G","T")), stringsAsFactors = FALSE)
+  states <- apply(state_combos, 1, paste0, collapse = "")
+  
+  # compute the fitness for each state
+  fitness <- apply(state_combos, 1, function(x) {
+    lambda0 + delta * sum(x == S)
+  })
+  names(fitness) <- states
+
+  # choose a random starting state
+  init_state <- initial_state(states, 1, S)
+  
+  # compute the (maximum) number of lineages (including the stem)
+  num_lineages <- 2 * n - 1
+  
+  # pre-allocate the lineage container
+  lineages   <- data.frame(anc = rep(NA, num_lineages), desc = NA, start = NA, end = NA, state = NA, fitness = NA, active = FALSE)
+  
+  # initialize the stem
+  lineages[1,]$anc     <- 0
+  lineages[1,]$start   <- 0
+  lineages[1,]$state   <- init_state
+  lineages[1,]$fitness <- fitness[init_state]
+  lineages[1,]$active  <- TRUE
+  
+  # incrementers
+  num_lineages <- 1
+  node_index   <- n + 1
+  num_samples  <- 0
+  num_gains    <- 0
+  current_time <- 0
+  
+  # simulate
+  repeat {
+    
+    # determine the active lineages
+    active_lineage_index <- which(lineages$active)
+    
+    # compute the number of active lineages
+    num_active <- length(active_lineage_index)
+    
+    # cat(num_active, "\t", num_samples, "\n", sep = "")
+    
+    # stop if the number of samples is n (complete) or n is 0 (extinct)
+    if ( num_active == 0 || num_active + num_samples == n ) {
+      break
+    } else if ( num_active + num_samples > n ) {
+      stop("Too many samples... what happened?")
+    }
+    
+    # otherwise, choose a waiting time for each lineage
+    active_fitnesses <- lineages$fitness[active_lineage_index]
+    active_rates     <- active_fitnesses + phi + gamma
+    
+    # simulate waiting times
+    next_event_times <- rexp(num_active, rate = active_rates)
+    current_time     <- current_time + min(next_event_times)
+    
+    # choose the lineage on which an event occurs
+    event_lineage <- active_lineage_index[which.min(next_event_times)]
+    
+    # choose the type of event
+    this_lineage_fitness <- lineages$fitness[event_lineage]
+    relative_event_probs <- c(this_lineage_fitness, phi, gamma) / (this_lineage_fitness + phi + gamma)
+    event_type           <- sample.int(3, size = 1, prob = relative_event_probs)
+    
+    # perform the event
+    if (event_type == 1) {
+      # speciation event
+      
+      # terminate the current lineage
+      lineages[event_lineage,]$desc   <- node_index
+      lineages[event_lineage,]$end    <- current_time
+      lineages[event_lineage,]$active <- FALSE
+      
+      # add the two new lineages
+      lineages[num_lineages + 1,]$anc     <- node_index
+      lineages[num_lineages + 1,]$start   <- current_time
+      lineages[num_lineages + 1,]$state   <- lineages[event_lineage,]$state
+      lineages[num_lineages + 1,]$fitness <- lineages[event_lineage,]$fitness
+      lineages[num_lineages + 1,]$active  <- TRUE
+
+      lineages[num_lineages + 2,]$anc     <- node_index
+      lineages[num_lineages + 2,]$start   <- current_time
+      lineages[num_lineages + 2,]$state   <- lineages[event_lineage,]$state
+      lineages[num_lineages + 2,]$fitness <- lineages[event_lineage,]$fitness
+      lineages[num_lineages + 2,]$active  <- TRUE
+      
+      # increment the counters
+      node_index   <- node_index + 1
+      num_lineages <- num_lineages + 2
+        
+    } else if (event_type == 2) {
+      # sampling event
+      num_samples <- num_samples + 1
+      lineages[event_lineage,]$desc   <- num_samples
+      lineages[event_lineage,]$end    <- current_time
+      lineages[event_lineage,]$active <- FALSE
+    } else if (event_type == 3) {
+      # mutation event
+      
+      # get the current state
+      current_state <- lineages[event_lineage,]$state
+      
+      # choose the new state
+      new_state <- sample(states[states != current_state], size = 1)
+      
+      # keep track if this is a new gain
+      if ( new_state == S ) {
+        num_gains <- num_gains + 1
+      }
+      
+      # update the lineage
+      lineages[event_lineage,]$state   <- new_state
+      lineages[event_lineage,]$fitness <- fitness[new_state]
+        
+    } else {
+      stop("Invalid event type... what happened?")
+    }
+    
+  }
+  
+  # get to the end
+  num_active <- sum(lineages$active)
+  if ( (num_samples + num_active) != n ) {
+    # dead simulation
+    return(NULL)
+  } else {
+    # we survived!    
+  }
+  
+  # add some extra time
+  active_fitnesses <- lineages$fitness[active_lineage_index]
+  active_rates     <- active_fitnesses + phi + gamma
+  next_event_times <- rexp(num_active, rate = active_rates)
+  current_time     <- current_time + min(next_event_times)
+  
+  # finalize the lineages
+  lineages[lineages$active,]$desc <- num_samples + 1:num_active
+  lineages[lineages$active,]$end  <- current_time
+  
+  # create the phylo object
+  edge        <- as.matrix(lineages[-1,1:2])
+  edge.length <- (lineages$end - lineages$start)[-1]
+  tip.label   <- paste0("t_", 1:n)
+  Nnode       <- length(tip.label) - 1
+  root.edge   <- lineages[1,]$end
+  phy         <- list(edge        = edge, 
+                      edge.length = edge.length,
+                      tip.label   = tip.label,
+                      Nnode       = Nnode,
+                      root.edge   = root.edge)
+  class(phy) <- "phylo"
+  
+  # create the sequence alignment
+  seq <- matrix(lineages$state[lineages$desc <= n], ncol = 1)
+  rownames(seq) <- tip.label
+  phy$tip.label
+
+  # return tree and alignment
+  res <- list(phy = phy, seq = seq, num_gains = num_gains)
+  return(res)
+    
+}
+
 # make the initial sequence
 initial_state <- function(states, L, M) {
   
@@ -731,18 +921,6 @@ simulateBirthDeathFitnessModel <- function(
   df <- do.call(rbind, df)
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

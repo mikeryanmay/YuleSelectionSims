@@ -1,268 +1,0 @@
-==========================================
-SLURM_JOB_ID = 48021405
-SLURM_NODELIST = c6-56
-==========================================
-Module R/3.6.3 loaded
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-Loading required package: Matrix
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-
-Attaching package: ‘expm’
-
-
-Attaching package: ‘expm’
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:Matrix’:
-
-    expm
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-The following object is masked from ‘package:ape’:
-
-    balance
-
-  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |=                                       |   2%  |                                                |                                        |   0%  |                                                |=                                       |   2%  |                                                |==                                      |   5%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |=                                       |   2%  |                                                |                                        |   0%  |                                                |==                                      |   5%  |                                                |=                                       |   2%  |                                                |=                                       |   2%  |                                                |                                        |   0%  |                                                |===                                     |   8%  |                                                |=                                       |   2%  |                                                |==                                      |   5%  |                                                |=                                       |   2%  |                                                |===                                     |   8%  |                                                |==                                      |   5%  |                                                |=                                       |   2%  |                                                |==                                      |   5%  |                                                |====                                    |  10%  |                                                |=                                       |   2%  |                                                |                                        |   0%  |                                                |==                                      |   5%  |                                                |====                                    |  10%  |                                                |===                                     |   8%  |                                                |==                                      |   5%  |                                                |==                                      |   5%  |                                                |=====                                   |  12%  |                                                |===                                     |   8%  |                                                |===                                     |   8%  |                                                |==                                      |   5%  |                                                |===                                     |   8%  |                                                |======                                  |  15%  |                                                |                                        |   0%  |                                                |=====                                   |  12%  |                                                |===                                     |   8%  |                                                |=                                       |   2%  |                                                |==                                      |   5%  |                                                |==                                      |   5%  |                                                |====                                    |  10%  |                                                |====                                    |  10%  |                                                |====                                    |  10%  |                                                |===                                     |   8%  |                                                |======                                  |  15%  |                                                |=======                                 |  18%  |                                                |====                                    |  10%  |                                                |===                                     |   8%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |=====                                   |  12%  |                                                |=====                                   |  12%  |                                                |========                                |  20%  |                                                |=======                                 |  18%  |                                                |====                                    |  10%  |                                                |====                                    |  10%  |                                                |=====                                   |  12%  |                                                |=====                                   |  12%  |                                                |=                                       |   2%  |                                                |=========                               |  22%  |                                                |===                                     |   8%  |                                                |                                        |   0%  |                                                |=====                                   |  12%  |                                                |======                                  |  15%  |                                                |====                                    |  10%  |                                                |===                                     |   8%  |                                                |========                                |  20%  |                                                |======                                  |  15%  |                                                |==========                              |  25%  |                                                |=====                                   |  12%  |                                                |==                                      |   5%  |                                                |======                                  |  15%  |                                                |======                                  |  15%  |                                                |=========                               |  22%  |                                                |====                                    |  10%  |                                                |===========                             |  28%  |                                                |=                                       |   2%  |                                                |======                                  |  15%  |                                                |======                                  |  15%  |                                                |=                                       |   2%  |                                                |=======                                 |  18%  |                                                |=======                                 |  18%  |                                                |=====                                   |  12%  |                                                |==                                      |   5%  |                                                |====                                    |  10%  |                                                |=======                                 |  18%  |                                                |==========                              |  25%  |                                                |=======                                 |  18%  |                                                |============                            |  30%  |                                                |=====                                   |  12%  |                                                |=======                                 |  18%  |                                                |=                                       |   2%  |                                                |=======                                 |  18%  |                                                |                                        |   0%  |                                                |                                        |   0%  |                                                |======                                  |  15%  |                                                |========                                |  20%  |                                                |========                                |  20%  |                                                |                                        |   0%  |                                                |========                                |  20%  |                                                |=============                           |  32%  |                                                |===========                             |  28%  |                                                |========                                |  20%  |                                                |=========                               |  22%  |                                                |========                                |  20%  |                                                |=========                               |  22%  |                                                |======                                  |  15%  |                                                |==                                      |   5%  |                                                |=========                               |  22%  |                                                |========                                |  20%  |                                                |=====                                   |  12%  |                                                |==============                          |  35%  |                                                |===                                     |   8%  |                                                |==========                              |  25%  |                                                |                                        |   0%  |                                                |=======                                 |  18%  |                                                |============                            |  30%  |                                                |=========                               |  22%  |                                                |==                                      |   5%  |                                                |===============                         |  38%  |                                                |======                                  |  15%  |                                                |==========                              |  25%  |                                                |==========                              |  25%  |                                                |===                                     |   8%  |                                                |=========                               |  22%  |                                                |==========                              |  25%  |                                                |===========                             |  28%  |                                                |=============                           |  32%  |                                                |=========                               |  22%  |                                                |==                                      |   5%  |                                                |================                        |  40%  |                                                |===========                             |  28%  |                                                |=======                                 |  18%  |                                                |========                                |  20%  |                                                |=                                       |   2%  |                                                |=======                                 |  18%  |                                                |===========                             |  28%  |                                                |=                                       |   2%  |                                                |============                            |  30%  |                                                |=================                       |  42%  |                                                |===                                     |   8%  |                                                |===========                             |  28%  |                                                |==============                          |  35%  |                                                |============                            |  30%  |                                                |=========                               |  22%slurmstepd: error: *** JOB 48021405 ON c6-56 CANCELLED AT 2022-05-04T10:07:21 ***
-Name                : factor_4_size_10_set_3
-User                : mrmay
-Account             : brannalagrp
-Partition           : med2
-Nodes               : c6-56
-Cores               : 20
-GPUs                : 0
-State               : CANCELLED by 512902,CANCELLED
-ExitCode            : 0:0
-Submit              : 2022-05-04T10:05:26
-Start               : 2022-05-04T10:05:29
-End                 : 2022-05-04T10:07:21
-Waited              :   00:00:03
-Reserved walltime   : 1-00:00:00
-Used walltime       :   00:01:52
-Used CPU time       :   00:00:00
-% User (Computation): --
-% System (I/O)      : --
-Mem reserved        : 20000M
-Max Mem used        : 0.00  (c6-56)
-Max Disk Write      : 0.00  (c6-56)
-Max Disk Read       : 0.00  (c6-56)

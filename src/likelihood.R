@@ -264,12 +264,18 @@ YuleLikelihood <- setRefClass(
     initSelectedSitesContainers = function() {
 
       if ( all(model == "-")  ) {
-
+        
         no_selected_sites <- TRUE
-
-        S <<- makeYuleRateMatrix("A", lambda0, 0, phi, gamma)
-        fitnesses <<- c(lambda0, lambda0, lambda0, lambda0, 0)
-
+        
+        S <<- makeYuleRateMatrix("A", lambda0, delta, phi, gamma)
+        
+        state_combos <- expand.grid(lapply(1:1, function(x) c("A","C","G","T")), stringsAsFactors = FALSE)
+        sel_states  <<- c(apply(state_combos, 1, paste0, collapse = ""), "0")
+        fitnesses <<- apply(state_combos, 1, function(x) {
+          lambda0 + delta * sum(x == "A")
+        })
+        fitnesses <<- c(fitnesses, 0)
+        
       } else {
 
         selected_sites <<- which(model != "-")
@@ -638,33 +644,22 @@ fitDelta = function(calculator, model) {
   # set the model
   calculator$setModel(model)
 
-  if ( any(model != "-") == FALSE ) {
+  # create the objective function for delta
+  objective_delta <- function(delta) {
 
-    # just fit the constant-rate model
-    calculator$setDelta(0)
-    fit_delta <- 0
-    delta_lik <- calculator$computeLikelihood()
+    # set gamma
+    calculator$setDelta(delta)
 
-  } else {
+    # compute likelihood
+    likelihood <- calculator$computeLikelihood()
 
-    # create the objective function for delta
-    objective_delta <- function(delta) {
-
-      # set gamma
-      calculator$setDelta(delta)
-
-      # compute likelihood
-      likelihood <- calculator$computeLikelihood()
-
-      return(likelihood)
-
-    }
-
-    fit_delta <- optimize(objective_delta, lower = 1e-16, upper = 1, maximum = TRUE)$maximum
-    calculator$setDelta(fit_delta)
-    delta_lik <- calculator$computeLikelihood()
+    return(likelihood)
 
   }
+
+  fit_delta <- optimize(objective_delta, lower = 1e-16, upper = 1, maximum = TRUE)$maximum
+  calculator$setDelta(fit_delta)
+  delta_lik <- calculator$computeLikelihood()
 
   res <- data.frame(lik = delta_lik, gamma = calculator$gamma, delta = fit_delta)
   return(res)

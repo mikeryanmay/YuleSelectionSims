@@ -2,26 +2,22 @@
 args <- commandArgs(TRUE)
 
 # just the replicate number
-rep <- args[1]
-# rep <- 1
+indir <- args[1]
+# indir <- "scenario/scenario_1_size_10/rep_1/"
+# indir <- "factor/tips_1000_size_10_factor_4/rep_1/"
 
 # source the code
-source("../../../src/likelihood.R")
+source("../../src/likelihood.R")
 
 # simulation settings
-t          <- 50        # total time
-gamma      <- 0.005     # mutation rate
-L          <- 1         # number of selected sites
-mu         <- 0         # extinction rate
-phi        <- 0.1       # the sampling rate
-rho        <- 1.0       # sampling fraction at the present
-rho_times  <- t         # sampling time at the present (note: could be a vector)
-r0         <- 1.2
-lambda_0   <- r0 * (mu + phi) # the birth rate
-delta      <- lambda_0
+lambda_0 <- 0.12      # birth rate
+gamma    <- 0.005     # mutation rate
+L        <- 1         # number of selected sites
+phi      <- 0.1       # sampling rate
+delta    <- 0
 
 # point at the directory
-indir <- paste0("data/rep_", rep, "/")
+# indir <- paste0("data/rep_", rep, "/")
 
 # find tree and data
 tree_file <- list.files(indir, pattern = "tree.nex", full.names = TRUE)
@@ -72,7 +68,7 @@ models <- do.call(rbind, models)
 fit_gamma  <- fitGamma(tree, seq, lambda_0, gamma, 0, 0, phi)
 this_gamma <- as.numeric(fit_gamma["gamma"])
 
-# make the caculator
+# make the calculator
 calculator <- YuleLikelihood(tree, seq, models[1,], lambda_0, this_gamma, delta, 0, phi)
 
 # now fit the model with delta
@@ -94,11 +90,15 @@ for(i in 1:number_of_models) {
 }
 model_fits <- do.call(rbind, model_fits)
 
-# now fit the constant-rate model
-constant_fit <- fitDelta(calculator, rep("-", num_sites))
+# fit the constant-rate model
+calculator$setDelta(0)
+constant_fit <- c(calculator$computeLikelihood(), this_gamma, 0)
+
+# fit the no-data variable model
+variable_fit <- fitDelta(calculator, rep("-", num_sites))
 
 # combine the models
-fits <- rbind(model_fits, constant_fit)
+fits <- rbind(model_fits, variable_fit, constant_fit)
 
 # write to file
 outdir <- gsub("data", "output", indir)
