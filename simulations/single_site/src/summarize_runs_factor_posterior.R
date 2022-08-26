@@ -176,8 +176,15 @@ for(i in 1:length(tips)) {
     for(k in 1:length(size)) {
       
       # get base and height
+      if ( any(size[k] %in% df$n) == FALSE ) {
+        next
+      }
       this_base   <- v$base[[k]]
       this_height <- v$height[[k]]
+      
+      if ( all(is.na(this_height)) ) {
+        next
+      }
       
       # approximate function
       fun <- approxfun(this_base, this_height)

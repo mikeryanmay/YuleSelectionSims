@@ -134,7 +134,7 @@ vioplot.default <-
         # print("A")
         # smout <- do.call("sm.density", c(list(data, xlim = est.xlim), args))
         smout <- do.call("sm.density", c(list(data, xlim = est.xlim), args))
-        if ( length(data) > 1 ) {
+        if ( length(unique(data)) > 1 ) {
           if ( has_weights ) {
             smout <- kde(data, h = smout$h, xmin = est.xlim[1], xmax = est.xlim[2], w = weights[[i]])
           } else {
@@ -186,7 +186,7 @@ vioplot.default <-
                                                  data.max))
       
       smout <- do.call("sm.density", c(list(data, xlim = est.xlim), args))
-      if ( length(data) > 1 ) {
+      if ( length(unique(data)) > 1 ) {
         if ( has_weights ) {
           smout <- kde(data, h = smout$h, xmin = est.xlim[1], xmax = est.xlim[2], w = weights[[i]])
         } else {
