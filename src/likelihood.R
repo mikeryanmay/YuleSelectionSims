@@ -1,5 +1,6 @@
 library(ape)
 library(expm)
+# library(Rfast)
 
 drop.extinct <- function (phy, tol = NULL) {
     if (!"phylo" %in% class(phy)) {
@@ -94,6 +95,12 @@ is.extinct <- function (phy, tol = NULL) {
 
 makeYuleRateMatrix <- function(S, lambda0, delta, phi, gamma) {
 
+  # print(S)
+  # print(lambda0)
+  # print(delta)
+  # print(phi)
+  # print(gamma)
+  
   # get the number of sites
   num_sites <- length(S)
   dim <- 4^num_sites + 1
@@ -196,7 +203,8 @@ YuleLikelihood <- setRefClass(
       raw_seq <<- toupper(data_)
 
       # find the extant tips
-      extant_tips <<- drop.extinct(tree)$tip.label
+      extant_tips <<- tree$tip.label[tree$tip.label %in% is.extinct(tree) == FALSE]
+      # extant_tips <<- drop.extinct(tree)$tip.label
 
       # store model and parameters
       model   <<- model_
@@ -376,6 +384,7 @@ YuleLikelihood <- setRefClass(
 
         # compute the transition probability matrix for the selected sites
         P_sel[[i]] <<- expm(S * this_bl)
+        # P_sel[[i]] <<- expm(S * this_bl, method = "AlMohy-Hi09")
 
       }
 
@@ -420,11 +429,12 @@ YuleLikelihood <- setRefClass(
     },
 
     getNeutralLikelihood = function() {
-      # only use the likelihoods for sites under selection
+      # only use the likelihoods for neutral sites
       return(sum(neutral_site_log_likelihoods[model == "-"]))
     },
 
     getSelectedLikelihood = function() {
+      # only use the likelihoods for sites under selection
       return(selected_site_log_likelihood)
     },
 
@@ -436,7 +446,7 @@ YuleLikelihood <- setRefClass(
         computeNeutralTransitionProbabilities()
 
         # compute the likelihood for each site
-        neu_rescale_log <<- 0
+        neu_rescale_log <<- rep(0, num_sites)
         recursiveComputeConditionalLikelihoodNeutral(edge_matrix$desc[1])
 
         # get likelihoods at the root
@@ -521,8 +531,13 @@ YuleLikelihood <- setRefClass(
         this_CL <- left_partial * right_partial
 
         # rescale the likelihood
-        scalar <- max(this_CL)
-        this_CL <- this_CL / scalar
+        # scalar <- colMaxs(this_CL, value = TRUE)
+        scalar <- numeric(num_sites)
+        for(i in 1:num_sites) {
+          scalar[i] <- max(this_CL[,i])
+          this_CL[,i] <- this_CL[,i] / scalar[i]
+        }
+        
         neu_rescale_log <<- neu_rescale_log + log(scalar)
 
         # store the conditional likelihood

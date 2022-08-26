@@ -1,0 +1,59 @@
+#NEXUS
+[Data written by write.nexus.data.R, Wed Jun 22 08:15:11 2022]
+BEGIN DATA;
+  DIMENSIONS NTAX=50 NCHAR=10;
+  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE=NO;
+  MATRIX
+    t_1       accgtgaacc
+    t_10      accgggaacc
+    t_11      accgggaacc
+    t_12      accgtgaacc
+    t_13      accgggaacc
+    t_14      acccggaacc
+    t_15      accgggaacc
+    t_16      accgtgaacc
+    t_17      accgggaacc
+    t_18      accgggaacc
+    t_19      accgggaacc
+    t_2       accgtgaacc
+    t_20      acccggaacc
+    t_21      accgggaacc
+    t_22      accgggaacc
+    t_23      accgggaacc
+    t_24      accgggaacc
+    t_25      accgggaacc
+    t_26      acccggaacc
+    t_27      accgggaacc
+    t_28      accgggaacc
+    t_29      accgtgaacc
+    t_3       accgtgaacc
+    t_30      accgtgaacc
+    t_31      accgtgaacc
+    t_32      accgggaacc
+    t_33      accgggaacc
+    t_34      accgggaacc
+    t_35      agcgggaacc
+    t_36      agcgggaacc
+    t_37      accgggaacc
+    t_38      accgaggacc
+    t_39      accgagaacc
+    t_4       accgtgaacc
+    t_40      accgggaacc
+    t_41      accgggaacc
+    t_42      accgtgaacc
+    t_43      accgtgaacc
+    t_44      accgggaacc
+    t_45      accgggaacc
+    t_46      accgggaacc
+    t_47      accgggaacc
+    t_48      accgggaacc
+    t_49      accgggaacc
+    t_5       accgggaacc
+    t_50      accgggaacc
+    t_6       accgtgaacc
+    t_7       accgggaacc
+    t_8       accgtgaacc
+    t_9       accgtgaacc
+  ;
+END;
+

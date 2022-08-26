@@ -1,0 +1,110 @@
+#NEXUS
+[Data written by write.nexus.data.R, Wed Jun 22 08:16:29 2022]
+BEGIN DATA;
+  DIMENSIONS NTAX=50 NCHAR=100;
+  FORMAT DATATYPE=DNA MISSING=? GAP=- INTERLEAVE=YES;
+  MATRIX
+    t_1       cgcaccagtcagcattctatgctatgtcacaaataggccaccgacagtataaactgtagctgctctccgagtggaactag
+    t_10      agccccggtcagcattttatgctatgtcacaaataggccaccgacagcataaactgtagctgctctccaagtggaactac
+    t_11      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctccaggtggaactac
+    t_12      agccccggtcagcattttatgctatgtcacaaataggccaccgacagcataaactgtagctgctctccaagtggaactac
+    t_13      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctccaagtggaactac
+    t_14      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctacaggtggaactac
+    t_15      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataatctgtagctgctctccaggtggaactac
+    t_16      agccccggtcagcattttatgctatgtcacaaataggccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_17      agccccggtcagcattttatgctatgtcacatatagggcaccgacaaaataaactgtagcagctctccaagtggaactac
+    t_18      agccccggtcagcattttatcctatgtcacaaataggccaccgacagaataaactgtagttgctctccaagtggaactac
+    t_19      agccccggtcagcattttatgctatgtcacaaataggccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_2       cgccccggtcagcattttgtgctatgtcactaataggccaccgacagtataaactgtagctgctctccaagtgaaactag
+    t_20      agccccggtcagcattttatgctatgtcacaaataggccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_21      agccccggtcagcattttatgctatgtcacaaataggccaccgcctgaataaactatatctgctctccaagtggaactac
+    t_22      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctccaagtggaactac
+    t_23      agccccggtcagcattttatcctatgtcacaaataggccaccgacagaataaactgtagttgctctccaagtggaactac
+    t_24      agccccggtcagcattttatcctatgtcacaaataggccaccgacagaataaactgtagttgctctccaagtggaactac
+    t_25      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctacaggtggaactac
+    t_26      agccccggtcagcattttatgctctgtcacaaataggccaccgacagaataaactgtagctgctgtccaagtggaactac
+    t_27      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctccaagtggaactac
+    t_28      agccccgctcagcattttatgctatgtcacaaataggccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_29      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctccaagtggaactac
+    t_3       cgccccggtcagcattttatgctatgtcacaaataggccaccgacagtataaactgtagctgctctctaagtggaactat
+    t_30      agccccggtcagcattttatcctatgtcacaaataggccaccgacagaataaactgtagttgctctccaagtggaactac
+    t_31      agccccggtcagcattttatcctatgtcacaaataggccaccgacagaataaactgtagttgctctccaagtggaactac
+    t_32      agccccggtcagcattttatgctatgtcacaaataggccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_33      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataatctgtagctgctctccaggtggaactac
+    t_34      agccccggtcagcattttatgctatgtcacaaatagggcaccgacaaaataaactgtagcagctctccaagtggaactac
+    t_35      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataatctgtagctgctctccaggtggaactac
+    t_36      agccccggtcagcattttatgctatgtcacaaataggccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_37      agccccggtcagcattttatgctatgtcacaaatagggcaccgacaaaataaactgtagcagctctccaagtggaactac
+    t_38      agccccggtcagcattttatgctatgtaacaaataggccaccgacaaaataaactgtagcagctctccaagtggaactac
+    t_39      agccccggtcagcattttatgctatgtaacaaataggccaccgacaaaataaactgtagcagctctccaagtggaactac
+    t_4       agccccggtcagcattttatgctatgtcacaaataggccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_40      agccccggtcagcattttatgctatgtcacaaatatgccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_41      agccccggtcagcattttatgctatgtcacaaatatgccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_42      agccccggtcagcattttatcctatgtcacaaataggccaccgacagaataaactgtagttgctctccaagtggaactac
+    t_43      agccccggtcagcattttatgctatgtcacaaatatgccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_44      agccccggtcagcattttatgctatgtcacaaatatgccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_45      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctccaagtggaactac
+    t_46      agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctccaagtggaactac
+    t_47      agccccggtcagcattttatgctatgtcacaaataggccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_48      agccccggtcagcattttatgctatgtcacaaataggccaccgacaaaataaactgtagctgctctccaagtggaactac
+    t_49      agccccggtcagcattttatgctatgtcacaaataggccacggacaaaataaactgtagctgctctccaagtggaactac
+    t_5       agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctccaagtggaactac
+    t_50      agccccggtcagcattttatgctatgtcacaaataggccacggacaaaataaactgtagctgctctccaagtggaactac
+    t_6       cgccccggtcagcattttatgctatgtcacaaataggccaccgaaagtataaactgtagctgctctctaagtggaactag
+    t_7       agccccggtcagcattttatgctatgtcacaaataggccaccgacagaataaactgtagctgctctccaagtggaactac
+    t_8       cgccccggtcagcattttatgctatgtcacaaatatgccaccgacaaaataaactgtagctgctctccaagtggaactat
+    t_9       cgccccggtcagcattttatgctatgtcacaaataggccaccgacaaaataaaatgtagctgctctccaagtggaactat
+
+    t_1       gccagggtgtacagttggat
+    t_10      gccagggtgtacagttggat
+    t_11      gccagggtgtacagttggat
+    t_12      gccagggtgtacagttggat
+    t_13      gccagggtgtacagttggat
+    t_14      gccagggtgtacagttggat
+    t_15      gccagggtgtacagttggat
+    t_16      gccagggtgtaccgttcgat
+    t_17      gccagggtgtacagttggat
+    t_18      gccagggtatacagttggat
+    t_19      gccagggtgtacagttggat
+    t_2       gccagggtgtacagttggat
+    t_20      gccagggtgtacagttggat
+    t_21      gccagggtgtacagttggat
+    t_22      gccagggtgtacagttggat
+    t_23      gccagtgtgtacagttggat
+    t_24      gccagggtgtacagttggat
+    t_25      gccagggtgtacagttggat
+    t_26      gccagggtgtacagttggat
+    t_27      gccagggtgtacagttggat
+    t_28      gccagggtgtacagttggat
+    t_29      gccagggtgtacagttggat
+    t_3       gccagggtgtacagttggat
+    t_30      gccagggtgtacagttggat
+    t_31      gccagggtgtacagttggat
+    t_32      gccagggtgtacagttggat
+    t_33      gccagggtgtacagttggat
+    t_34      gccagggtgtacagttggat
+    t_35      gccagggtgtacagttggat
+    t_36      gccagggtgtacagttggat
+    t_37      gccagggtgtacagttggat
+    t_38      gccagggtgtaccgttcgat
+    t_39      gccagggtgtaccgttcgat
+    t_4       gccagggtgtacagttggat
+    t_40      gccagggtgtacagttggat
+    t_41      gccagggtgtacagttggat
+    t_42      gccagggtatacagttggat
+    t_43      gccagggtgtacagttggat
+    t_44      gccagggtgtacagttggat
+    t_45      gccagggtgtacagttagat
+    t_46      gccagggtgtacagttagat
+    t_47      gccagggtgtacagttggat
+    t_48      gccagggtgtacagttggat
+    t_49      gccagggtgtacagttggat
+    t_5       gccagggtgtacagttggat
+    t_50      gccagggtgtacagttggat
+    t_6       gccagggtgtacagttggat
+    t_7       gccagggtgtacatttggat
+    t_8       gccaggttgtacagttggat
+    t_9       gccagggtgtacagttggat
+  ;
+END;
+

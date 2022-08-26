@@ -2,3 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
+**/tree.pdf
+**/fits.tsv
+**/partition_info.tsv
+**/liks.tsv
+**/posterior.log

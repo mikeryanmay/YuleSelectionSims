@@ -183,11 +183,16 @@ simulateYuleSelectionTree <- function(S, lambda0, delta, phi, gamma, n) {
   
   # create the sequence alignment
   seq <- matrix(lineages$state[lineages$desc <= n], ncol = 1)
-  rownames(seq) <- tip.label
-  phy$tip.label
+  rownames(seq) <- paste0("t_", lineages$desc[lineages$desc <= n])
+  seq <- t(t(seq[tip.label,]))
 
+  # get sequences for nodes
+  nodes <- sort(lineages$desc[lineages$desc > n])
+  nodeseq <- matrix(lineages$state[match(nodes, lineages$desc)], ncol = 1)
+  rownames(nodeseq) <- nodes
+  
   # return tree and alignment
-  res <- list(phy = phy, seq = seq, num_gains = num_gains)
+  res <- list(phy = phy, seq = seq, nodeseq = nodeseq, num_gains = num_gains)
   return(res)
     
 }
