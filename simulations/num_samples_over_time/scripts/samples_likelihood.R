@@ -32,8 +32,8 @@ sample_times <- temporal_data[temporal_data$type == "sample",]$ages
 max_time     <- max(temporal_data$ages)
 
 # make a matrix
-# Q <- countMatrixModel(nmax, lambda0, lambda1, phi, gamma / 3, gamma)
-Q <- countMatrixModel(nmax, lambda0, lambda0, phi, gamma / 3, gamma)
+Q <- countMatrixModel(nmax, lambda0, lambda1, phi, gamma, gamma)
+# Q <- countMatrixModel(nmax, lambda0, lambda0, phi, gamma / 3, gamma)
 
 # make the events
 R0 <- sampleMatrixModel(nmax, phi, "0")
