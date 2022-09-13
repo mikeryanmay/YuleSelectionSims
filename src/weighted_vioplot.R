@@ -349,7 +349,7 @@ vioplot.default <-
       title(main = main, sub = sub, xlab = xlab, ylab = ylab, line = line, outer = outer, xpd = xpd, cex.main = cex.main, col.main = col.main, font.main = font.main)
     }
     invisible(list(upper = upper, lower = lower, median = med,
-                   q1 = q1, q3 = q3, height = height, base = base))
+                   q1 = q1, q3 = q3, height = height, base = base, xlim = xlim))
   }
 
 

@@ -5,5 +5,10 @@
 **/tree.pdf
 **/fits.tsv
 **/partition_info.tsv
+**/partitioned.tsv
+**/numerical_posterior.tsv
+**/marg_lik.tsv
 **/liks.tsv
+**/tree.nex
+**/seq.nex
 **/posterior.log

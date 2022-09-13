@@ -1,0 +1,65 @@
+# RUN FROM simulations/single_site
+# setwd("simulations/multiple_sites/")
+
+library(gtools)
+
+# clear the _run directory
+old_runs <- list.files("_run_multiple_sites", full.names = TRUE)
+file.remove(old_runs)
+dir.create("_run_multiple_sites", showWarnings = FALSE)
+
+# find all the analyses to do
+all_tree_files <- list.files(pattern = "tree.nex", recursive = TRUE, full.names = TRUE)
+
+# get all unique directories
+all_dirs <- unique(gsub("/tree.nex", "", all_tree_files))
+
+# remove all files, if you want 
+# file.remove(list.files("sims/", pattern = "site_models.tsv", full.names = TRUE, recursive = TRUE))
+# file.remove(list.files("sims/", pattern = "model_plot.pdf", full.names = TRUE, recursive = TRUE))
+
+# check if the runs already have posterior.log
+all_dirs <- all_dirs[sapply(all_dirs, function(x) any(grepl("site_models.tsv", list.files(x)))) == FALSE]
+
+# sort the jobs naturally
+all_dirs <- mixedsort(all_dirs)
+
+# read template
+template <- readLines("src/run_template_multiple_sites.sh")
+
+# chunk the runs
+chunk_size <- 20
+num_chunks <- ceiling(length(all_dirs) / chunk_size)
+
+# loop over chunks
+for(i in 1:num_chunks) {
+
+  # get the runs for this chunk
+  jobs <- 1:chunk_size + (i - 1) * chunk_size
+
+  # copy the template
+  this_slurm <- template
+
+  # get the name
+  this_slurm <- gsub("NAME_PLACEHOLDER", paste0("chunk_", i), this_slurm)
+
+  # get the tasks for this chunk
+  these_tasks <- all_dirs[jobs]
+  these_tasks <- these_tasks[is.na(these_tasks) == FALSE]
+
+  # replace the tasks
+  for(j in seq_along(these_tasks)) {
+    this_slurm <- gsub(paste0("RUN", j, " "), paste0(these_tasks[j], " "), this_slurm)
+  }
+
+  # drop non-tasks
+  this_slurm <- this_slurm[grepl("RUN", this_slurm) == FALSE]
+
+  # make sure the last job has a ; instead of a &
+  last_job <- max(grep("Rscript", this_slurm))
+  this_slurm[last_job] <- gsub("&", ";", this_slurm[last_job])
+
+  # write the slurm script
+  writeLines(this_slurm, paste0("_run_multiple_sites/", paste0("chunk_", i), ".sh" ))
+
+}

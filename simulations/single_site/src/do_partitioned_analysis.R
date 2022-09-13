@@ -44,9 +44,9 @@ invisible(mclapply(1:nrow(all_sims), function(i) {
   # check if output file exists
   outdir  <- gsub("data", "output", indir)
   dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
-  outfile <- paste0(outdir, "/partition_info.tsv")
+  outfile <- paste0(outdir, "/partitioned.tsv")
   if ( overwrite == FALSE ) {
-    if ( "partition_info.tsv" %in% list.files(indir) ) {
+    if ( "partitioned.tsv" %in% list.files(indir) ) {
       return(NULL)
     }
   }
@@ -89,7 +89,7 @@ invisible(mclapply(1:nrow(all_sims), function(i) {
   # write to file
   write.table(fits, file = outfile, quote = FALSE, sep = "\t", row.names = FALSE)
   
-}, mc.cores = 8, mc.preschedule = FALSE))
+}, mc.cores = 6, mc.preschedule = FALSE))
 
 
 

@@ -27,7 +27,7 @@ summaries <- do.call(rbind, lapply(1:nrow(grid), function(i) {
   cat(i, " -- ", nrow(grid),"\n", sep = "")
   
   # check if the output file exists
-  this_tsv <- paste0("factor/tips_", this_tips, "_size_", this_size, "_factor_", this_factor, "/rep_", this_rep, "/partition_info.tsv")
+  this_tsv <- paste0("factor/tips_", this_tips, "_size_", this_size, "_factor_", this_factor, "/rep_", this_rep, "/partitioned.tsv")
   if ( file.exists(this_tsv) == FALSE ) {
     return(NULL)
   }

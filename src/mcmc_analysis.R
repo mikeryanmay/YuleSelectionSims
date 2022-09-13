@@ -1,12 +1,11 @@
-library(adaptMCMC)
-
 # get the arguments
 args <- commandArgs(TRUE)
 
 # just the replicate number
 indir <- args[1]
 # indir <- "scenario/scenario_1_size_10/rep_1/"
-# indir <- "factor/tips_100_size_10_factor_4/rep_3/"
+# indir <- "factor/tips_1000_size_1000_factor_4/rep_1/"
+# indir <- "factor2/tips_100_size_1_factor_4/rep_2/"
 
 # source the code
 source("../../src/likelihood.R")
@@ -65,28 +64,128 @@ likelihood <- function(lambda_1) {
 # and the 97.5% quantile is 6 times the median
 m  <- lambda_0
 sd <- log(36) / (qnorm(0.975) - qnorm(0.025))
-prior <- function(lambda_1) dlnorm(lambda_1, m, sd, log = TRUE)
+prior <- function(lambda_1) dlnorm(lambda_1, log(m), sd, log = TRUE)
+# prior <- function(lambda_1) dunif(lambda_1, 0, 1, log = TRUE)
 
-# create the posterior function
-posterior <- function(lambda_1) {
-  if (lambda_1 < 0) {
-    return(-Inf)
-  } else {
-    likelihood(lambda_1) + prior(lambda_1)  
+# create a proposal function
+prop <- function(x, delta = 0.1) {
+  
+  x_prime <- rnorm(1, x, delta)
+  if (x_prime < 0) {
+    x_prime <- -x_prime
   }
+  
+  return(x_prime)
+  
 }
 
-# create the MCMC sampler
-samples <- MCMC(posterior, 10000, lambda_0, acc.rate = 0.44)
+# initialize the sampler
+# lambda_1 <- rlnorm(1, log(m), sd)
+lambda_1 <- lambda_0
+lpost    <- likelihood(lambda_1)
+
+# do a burnin
+proposed  <- 0
+accepted  <- 0
+tune_num  <- 10
+tune_freq <- 100 
+delta     <- 0.1
+
+for(i in 1:tune_num) {
+  
+  for(j in 1:tune_freq) {
+    
+    # propose new value
+    lambda_1_prime <- prop(lambda_1, delta)
+    proposed <- proposed + 1
+    
+    # compute acceptance probability
+    lpost_prime <- likelihood(lambda_1_prime) + prior(lambda_1_prime)
+    R <- exp(lpost_prime - lpost)
+    
+    # accept/reject
+    if ( runif(1) < R ) {
+      
+      # increment acceptance counter
+      accepted <- accepted + 1
+      
+      # update values
+      lambda_1 <- lambda_1_prime
+      lpost    <- lpost_prime
+      
+    }
+    
+  }
+  
+  # compute the acceptance rate
+  f <- accepted / proposed
+  
+  # tune
+  if ( f < 0.44 ) {
+    delta <- delta / (2.0 - f / 0.44)
+  } else {
+    delta <- delta * (1.0 + ((f - 0.44) / (1.0 - 0.44)))
+  }
+  
+  # reset counters
+  proposed <- 0
+  accepted <- 0
+  
+  cat(f, " -- ", delta, "\n")
+  
+}
+
+# sample the posterior
+nsamples <- 10000
+thin     <- 1
+post     <- numeric(nsamples)
+trace    <- numeric(nsamples)
+
+bar <- txtProgressBar(style = 3, width = 40)
+for(i in 1:nsamples) {
+  
+  for(j in 1:thin) {
+    
+    # propose new value
+    lambda_1_prime <- prop(lambda_1, delta)
+    proposed <- proposed + 1
+    
+    # compute acceptance probability
+    lpost_prime <- likelihood(lambda_1_prime) + prior(lambda_1_prime)
+    R <- exp(lpost_prime - lpost)
+    
+    # accept/reject
+    if ( runif(1) < R ) {
+      
+      # increment acceptance counter
+      accepted <- accepted + 1
+      
+      # update values
+      lambda_1 <- lambda_1_prime
+      lpost    <- lpost_prime
+      
+    }
+    
+  }
+  
+  # record samples
+  post[i]  <- lpost
+  trace[i] <- lambda_1
+  
+  setTxtProgressBar(bar, i / nsamples)
+  
+}
+
+# close the progress bar
+close(bar)
 
 # create the trace
-trace <- cbind(1:nrow(samples$samples), samples$samples)
-colnames(trace) <- c("iteration", "lambda1")
+samples <- data.frame(iteration = 1:nsamples, post = post, lambda1 = trace)
 
 # write to file
 outdir <- gsub("data", "output", indir)
 dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
-write.table(trace, file = paste0(outdir, "/posterior.log"), quote = FALSE, sep = "\t", row.names = FALSE)
+write.table(samples, file = paste0(outdir, "/posterior.log"), quote = FALSE, sep = "\t", row.names = FALSE)
 
 # quit
 q()

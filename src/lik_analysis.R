@@ -7,6 +7,7 @@ indir <- args[1]
 # indir <- "factor/tips_100_size_10_factor_4/rep_3/"
 # indir <- "factor/tips_100_size_10_factor_1.5/rep_1/"
 # indir <- "factor/tips_1000_size_10_factor_1/rep_1/"
+# indir <- "factor2/tips_100_size_1_factor_4/rep_2/"
 
 # source the code
 source("../../src/likelihood.R")
@@ -70,7 +71,9 @@ models <- do.call(rbind, models)
 tmp <- indir
 tmp <- gsub("/", "_", tmp)
 tmp <- strsplit(tmp, "_")[[1]]
-f <- as.numeric(tmp[which(tmp == "factor")[2] + 1])
+f <- as.numeric(tmp[which(tmp == "rep") - 1])
+# f <- as.numeric(tmp[which(tmp == "factor")[2] + 1])
+# f <- as.numeric(tmp[which(tmp == "factor")[1] + 1])
 delta <- f * lambda_0 - lambda_0
 
 # make the calculator

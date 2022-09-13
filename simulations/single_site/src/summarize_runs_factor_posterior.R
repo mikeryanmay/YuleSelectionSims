@@ -10,11 +10,14 @@ library(ggplot2)
 # load vioplot function
 source("../../src/weighted_vioplot.R")
 
+# specify figure directory
+# figdir <- "figures/"
+figdir <- "~/repos/yuleselectionMS/figures/"
+
 # enumerate the analyses
 tips    <- c(50, 100, 250, 500, 750, 1000)
 size    <- c(1, 10, 100, 1000)
 factors <- c(1, 1.5, 2, 2.5, 3, 4)
-# factors <- c(1.5, 2, 2.5, 3, 4)
 reps    <- 1:200
 
 # make all combinations
@@ -46,7 +49,7 @@ summaries <- do.call(rbind, lapply(1:nrow(grid), function(i) {
   # results$lik <- results$lik - max(results$lik)
   results$lik <- results[,1] - max(results[,1])
   
-  if ( all(is.na(results$lik)) ) {
+  if ( any(is.na(results$lik)) | any(is.infinite(results$lik)) ) {
     cat("\tOops!\n")
     return(NULL)
   }
@@ -61,15 +64,26 @@ summaries <- do.call(rbind, lapply(1:nrow(grid), function(i) {
   prior_over_models     <- c(rep(prior_site_selected, num_models), prior_constant)
   posterior_over_models <- exp(results$lik) * prior_over_models
   posterior_over_models <- posterior_over_models / sum(posterior_over_models)
+  posterior_over_models <- round(posterior_over_models, 10)
   
   # compute credible set
   posteriors <- posterior_over_models
   names(posteriors) <- 1:length(posterior_over_models)
   posteriors <- sort(posteriors, decreasing = TRUE)
   cum_posteriors <- cumsum(posteriors)
+
+  # get the model index  
+  if ( this_factor == 1 ) {
+    # get a random model
+    this_model <- sample.int(length(prior_over_models), size = 1, prob = prior_over_models)
+    true_model_index <- which(names(cum_posteriors) == as.character(this_model))
+    # true_model_index <- which(names(cum_posteriors) == as.character(length(posterior_over_models)))    
+    # true_model_index <- which(names(cum_posteriors) == as.character(sample.int(4 * this_size, size = 1)))
+  } else {
+    true_model_index <- which(names(cum_posteriors) == "1")  
+  }
   
   # does the credible set include the true model?
-  true_model_index <- which(names(cum_posteriors) == "1")
   if ( true_model_index == 1 ) {
     # case 1: true model is first
     if ( cum_posteriors[1] < 0.95 ) {
@@ -77,7 +91,10 @@ summaries <- do.call(rbind, lapply(1:nrow(grid), function(i) {
       included <- 1
     } else {
       # case 1b: true model has probability > 0.95 and so may not be in the 95% credible set
-      included <- 0.95 / cum_posteriors[1]
+      # included <- 0.95 / cum_posteriors[1]
+      # included <- 1
+      include_chance <- 0.95 / cum_posteriors[1]
+      included <- rbinom(1, 1, include_chance)
     }
   } else {
     # case 2: true model is not first
@@ -87,17 +104,26 @@ summaries <- do.call(rbind, lapply(1:nrow(grid), function(i) {
     } else if ( cum_posteriors[true_model_index - 1] < 0.95 ) {
       # case 2b: true model has some chance of being in credible set
       remainder <- 0.95 - cum_posteriors[true_model_index - 1]
-      included  <- remainder / posteriors[true_model_index]
+      include_chance <- remainder / posteriors[true_model_index]
+      included <- rbinom(1, 1, include_chance)
     } else {
       # case 2c: true model not in credible set
       included <- 0.0
     }
   }
 
+  # compute whether true model is MAP model
+  if ( this_factor == 1 ) {
+    map_is_true <- which.max(posterior_over_models) == this_model
+  } else {
+    map_is_true <- which.max(posterior_over_models) == 1
+  }
+  
   # compute width of credible set
   if ( cum_posteriors[1] > 0.95 ) {
     # case 1: first model dominates the credible set
-    credible_set_size <- 0.95 / cum_posteriors[1]
+    # credible_set_size <- 0.95 / cum_posteriors[1]
+    credible_set_size <- 1
   } else {
     # case 2: credible set includes one or more models
     definitely_in_set <- cum_posteriors < 0.95
@@ -117,21 +143,28 @@ summaries <- do.call(rbind, lapply(1:nrow(grid), function(i) {
                     posteriors        = I(list(posterior_over_models)),
                     included          = included,
                     credible_set_size = credible_set_size,
+                    map_is_true       = map_is_true,
                     BF_per_site       = I(list(BF_per_site)))
   
   return(res)
   
 }))
 
+print(dim(summaries))
+
 ################################################
 # posterior probability of constant-rate model #
 ################################################
 
-colors <- brewer.pal(4, "Set1")
+# colors <- brewer.pal(4, "Set1")
+colors <- gsub("FF", "", plasma(4, begin = 0.1, end = 0.9))
+# col_theoretical <- brewer.pal(5, "Set1")[5]
+col_theoretical <- "black"
+# plot(1:9, col = brewer.pal(9, "Set1"), pch = 19)
 
 layout_mat <- matrix(1:(length(tips) * length(factors)), ncol = length(factors), nrow = length(tips), byrow = TRUE)
 
-pdf("figures/posterior_neutral.pdf", height = 14, width = 12)
+pdf(paste0(figdir, "posterior_neutral.pdf"), height = 12, width = 12)
 layout(layout_mat)
 par(mar=c(0,0,0,0), oma = c(4,6.5,2,0) + 0.1)
 
@@ -155,62 +188,57 @@ for(i in 1:length(tips)) {
     these_included   <- these_summaries$included
     df <- data.frame(n = these_sizes, p = these_posteriors, s = these_set_sizes)
     
+    if ( nrow(df) == 0 ) {
+      plot(1, pch = NA, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n")
+      next
+    }
+    
     # the vioplot
     v <- vioplot(formula = p ~ n,
                  data    = df,
                  ylim    = c(0,1),
                  col     = paste0(colors,"50"),
                  rectCol = NA, lineCol = NA, pchMed = NA, border = NA,
-                 names   = size, areaEqual = TRUE,
+                 names   = size, areaEqual = FALSE,
                  xlab    = NA, ylab = NA, xaxt = "n", yaxt = "n")
-    
-    # vioplot(formula = p ~ n, 
-    #         data    = df, 
-    #         ylim    = c(0,1),
-    #         col     = paste0(colors,"50"),
-    #         rectCol = NA, lineCol = NA, pchMed = NA, border = NA,
-    #         names   = size, areaEqual = FALSE,
-    #         xlab    = NA, ylab = NA, xaxt = "n", yaxt = "n")
     
     # the points
     for(k in 1:length(size)) {
-      
+
       # get base and height
       if ( any(size[k] %in% df$n) == FALSE ) {
         next
       }
+
       this_base   <- v$base[[k]]
       this_height <- v$height[[k]]
-      
+
       if ( all(is.na(this_height)) ) {
-        next
+        fun <- function(x) 1/3
+      } else {
+        # approximate function
+        fun <- approxfun(this_base, this_height)
       }
-      
-      # approximate function
-      fun <- approxfun(this_base, this_height)
-      
+
+
       # get y coordinates
       y <- df$p[df$n == size[k]]
-      
+
       # get jitter factor per coordinate
       jitter_factor <- fun(y)
       x <- k + runif(length(y), -jitter_factor, jitter_factor)
-      
+
       c <- colors[k]
       w <- 0.5
-      
+
       points(x, y, col = c, cex = w, pch = 19)
-      
+
+    }
+
+    if (j == 1) {
+      points(rep(0.5, length(size)), pch = 3, col = col_theoretical, lwd = 2, lend = 2)
     }
     
-    # x <- jitter(match(df$n, size), factor = 1.0)
-    # y <- df$p
-    # c <- colors[match(df$n, size)]
-    # w <- 0.5
-    # # w <- 0.5 * these_included
-    # 
-    # points(x, y, col = c, cex = w, pch = 19)
-   
     if (i == 1) {
       mtext(paste0("f = ", this_f), side = 3, line = 0.5)
     }
@@ -239,7 +267,7 @@ dev.off()
 # posterior probability of true model #
 #######################################
 
-pdf("figures/posterior_true.pdf", height = 14, width = 12)
+pdf(paste0(figdir, "posterior_true.pdf"), height = 12, width = 12)
 layout(layout_mat)
 par(mar=c(0,0,0,0), oma = c(4,6.5,2,0) + 0.1)
 
@@ -258,7 +286,7 @@ for(i in 1:length(tips)) {
     
     # get the posterior of the true model
     these_sizes      <- these_summaries$size
-    these_posteriors <- sapply(these_summaries$posteriors, head, n = 1)
+    these_posteriors <- sapply(these_summaries$posteriors, head, n = 1)  
     these_set_sizes  <- these_summaries$credible_set_size
     these_included   <- these_summaries$included
     df <- data.frame(n = these_sizes, p = these_posteriors, s = these_set_sizes)
@@ -269,41 +297,43 @@ for(i in 1:length(tips)) {
                  ylim    = c(0,1),
                  col     = paste0(colors,"50"),
                  rectCol = NA, lineCol = NA, pchMed = NA, border = NA,
-                 names   = size, areaEqual = TRUE,
+                 names   = size, areaEqual = FALSE,
                  xlab    = NA, ylab = NA, xaxt = "n", yaxt = "n")
     
     # the points
     for(k in 1:length(size)) {
-      
+
       # get base and height
+      if ( any(size[k] %in% df$n) == FALSE ) {
+        next
+      }
       this_base   <- v$base[[k]]
       this_height <- v$height[[k]]
-      
-      # approximate function
-      fun <- approxfun(this_base, this_height)
-      
+
+      if ( all(is.na(this_height)) ) {
+        fun <- function(x) 1/3
+      } else {
+        # approximate function
+        fun <- approxfun(this_base, this_height)
+      }
+
       # get y coordinates
       y <- df$p[df$n == size[k]]
-      
+
       # get jitter factor per coordinate
       jitter_factor <- fun(y)
       x <- k + runif(length(y), -jitter_factor, jitter_factor)
-      
+
       c <- colors[k]
       w <- 0.5
-      
+
       points(x, y, col = c, cex = w, pch = 19)
-      
+
     }
     
-    # # the points
-    # x <- jitter(match(df$n, size), factor = 1.0)
-    # y <- df$p
-    # c <- colors[match(df$n, size)]
-    # w <- 0.5
-    # # w <- 0.5 * these_included
-    # 
-    # points(x, y, col = c, cex = w, pch = 19)
+    if (j == 1) {
+      points(0.5 / (4 * size), pch = 3, col = col_theoretical, lwd = 2, lend = 2)
+    }
     
     if (i == 1) {
       mtext(paste0("f = ", this_f), side = 3, line = 0.5)
@@ -333,7 +363,7 @@ dev.off()
 # frequency included in credible set #
 ######################################
 
-pdf("figures/posterior_in_cs.pdf", height = 14, width = 12)
+pdf(paste0(figdir, "posterior_in_cs.pdf"), height = 12, width = 12)
 layout(layout_mat)
 par(mar=c(0,0,0,0), oma = c(4,6.5,2,0) + 0.1)
 
@@ -359,9 +389,10 @@ for(i in 1:length(tips)) {
     y <- included_freq
     w <- 1.0
 
-    # plot    
-    plot(1:length(size), y, col = "black", cex = w, pch = NA, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n", ylim = c(0,1), type = "b")
-    points(1:length(size), y, col = colors, cex = w, pch = 19, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n", ylim = c(0,1), type = "p")
+    # plot
+    plot(which(size %in% names(y)), y, col = "black", cex = w, pch = NA, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n", ylim = c(0,1), type = "b")
+    abline(h = 0.95, lty = 2)
+    points(which(size %in% names(y)), y, col = colors, cex = w, pch = 19, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n", ylim = c(0,1), type = "p")
     
     if (i == 1) {
       mtext(paste0("f = ", this_f), side = 3, line = 0.5)
@@ -379,7 +410,7 @@ for(i in 1:length(tips)) {
     }
     
     if (i == 1 & j == 1) {
-      legend("topleft", legend = size, col = colors, pch = 19, pt.cex = 1, bty = "n", title = "n")
+      legend("bottomleft", legend = size, col = colors, pch = 19, pt.cex = 1, bty = "n", title = "n")
     }
     
   }
@@ -393,7 +424,7 @@ dev.off()
 ##############################
 
 
-pdf("figures/posterior_relative_cs_size.pdf", height = 14, width = 12)
+pdf(paste0(figdir, "posterior_relative_cs_size.pdf"), height = 12, width = 12)
 layout(layout_mat)
 par(mar=c(0,0,0,0), oma = c(4,6.5,2,0) + 0.1)
 
@@ -424,42 +455,49 @@ for(i in 1:length(tips)) {
                  ylim    = c(0,1),
                  col     = paste0(colors,"50"),
                  rectCol = NA, lineCol = NA, pchMed = NA, border = NA,
-                 names   = size, areaEqual = TRUE,
+                 names   = size, areaEqual = FALSE,
                  xlab    = NA, ylab = NA, xaxt = "n", yaxt = "n")
     
     # the points
     for(k in 1:length(size)) {
-      
+
       # get base and height
+      if ( any(size[k] %in% df$n) == FALSE ) {
+        next
+      }
       this_base   <- v$base[[k]]
       this_height <- v$height[[k]]
-      
-      # approximate function
-      fun <- approxfun(this_base, this_height)
-      
+
+      if ( all(is.na(this_height)) ) {
+        fun <- function(x) 1/3
+      } else {
+        # approximate function
+        fun <- approxfun(this_base, this_height)
+      }
+
       # get y coordinates
       y <- df$s[df$n == size[k]] / (4 * size[k] + 1)
-      
+
       # get jitter factor per coordinate
       jitter_factor <- fun(y)
       x <- k + runif(length(y), -jitter_factor, jitter_factor)
-      
+
       c <- colors[k]
       w <- 0.5 * these_summaries$included[these_summaries$size == size[k]]
-      # w <- 0.5 
-      
+      w[w == 0] <- NA
+      # w <- 0.5
+
       points(x, y, col = c, cex = w, pch = 19)
-      
+
     }
     
-    # the points
-    # x <- jitter(match(df$n, size), factor = 1.0)
-    # y <- df$s / (4 * df$n + 1)
-    # c <- colors[match(df$n, size)]
-    # w <- 0.5
-    # # w <- 0.5 * these_included
-    # 
-    # points(x, y, col = c, cex = w, pch = 19)
+    if (j == 1) {
+      points((1 + 4 * size * 0.9) / (4 * size + 1), pch = 3, col = col_theoretical, lwd = 2, lend = 2)
+      # points(rep(0.95 * 0.95, length(size)), pch = 3, col = col_theoretical, lwd = 2, lend = 2)
+      # points(rep(0.95, length(size)), pch = 3, col = col_theoretical, lwd = 2, lend = 2)
+    } else {
+      points(1 / (4 * size + 1), pch = 3, col = col_theoretical, lwd = 2, lend = 2)
+    }
     
     if (i == 1) {
       mtext(paste0("f = ", this_f), side = 3, line = 0.5)
@@ -467,17 +505,17 @@ for(i in 1:length(tips)) {
     
     if (i == length(tips)) {
       axis(1, lwd = 0, lwd.tick = 1, at = 1:length(size), labels = size, las = 2)
-      mtext("n", side = 1, line = 2.5, las = 2)
+      mtext("n", side = 1, line = 2.5, las = 1)
     }
     
     if (j == 1) {
       axis(2, lwd = 0, lwd.tick = 1, las = 2)
-      mtext("set size", side = 2, line = 3)
+      mtext("relative set size", side = 2, line = 3)
       mtext(paste0("c = ", this_c), side = 2, line = 5)
     }
     
     if (i == 1 & j == 1) {
-      legend("topleft", legend = size, col = colors, pch = 19, pt.cex = 1, bty = "n", title = "n")
+      legend("bottomleft", legend = size, col = colors, pch = 19, pt.cex = 1, bty = "n", title = "n")
     }
     
   }
@@ -491,7 +529,7 @@ dev.off()
 #########################
 
 
-pdf("figures/posterior_raw_cs_size.pdf", height = 14, width = 12)
+pdf(paste0(figdir, "posterior_raw_cs_size.pdf"), height = 12, width = 12)
 layout(layout_mat)
 par(mar=c(0,0,0,0), oma = c(4,6.5,2,0) + 0.1)
 
@@ -523,42 +561,44 @@ for(i in 1:length(tips)) {
                  w       = split(these_included, df$n), 
                  col     = paste0(colors,"50"),
                  rectCol = NA, lineCol = NA, pchMed = NA, border = NA,
-                 names   = size, areaEqual = TRUE,
+                 names   = size, areaEqual = FALSE,
                  xlab    = NA, ylab = NA, xaxt = "n", yaxt = "n")
     
     # the points
     for(k in 1:length(size)) {
-      
+
       # get base and height
+      if ( any(size[k] %in% df$n) == FALSE ) {
+        next
+      }
       this_base   <- v$base[[k]]
       this_height <- v$height[[k]]
-      
-      # approximate function
-      fun <- approxfun(this_base, this_height)
-      
+
+      if ( all(is.na(this_height)) ) {
+        fun <- function(x) 1/3
+      } else {
+        # approximate function
+        fun <- approxfun(this_base, this_height)
+      }
+
       # get y coordinates
       y <- df$s[df$n == size[k]]
-      
+
       # get jitter factor per coordinate
       jitter_factor <- fun(y)
       x <- k + runif(length(y), -jitter_factor, jitter_factor)
-      
+
       c <- colors[k]
       w <- 0.5 * these_summaries$included[these_summaries$size == size[k]]
-      # w <- 0.5 
-      
+      # w <- 0.5
+
       points(x, y, col = c, cex = w, pch = 19)
-      
+
     }
     
-    # the points
-    # x <- jitter(match(df$n, size), factor = 1.0)
-    # y <- df$s / (4 * df$n + 1)
-    # c <- colors[match(df$n, size)]
-    # w <- 0.5
-    # # w <- 0.5 * these_included
-    # 
-    # points(x, y, col = c, cex = w, pch = 19)
+    if (j == 1) {
+      points(1 + 4 * size * 0.9, pch = 3, col = col_theoretical, lwd = 2, lend = 2)
+    }
     
     if (i == 1) {
       mtext(paste0("f = ", this_f), side = 3, line = 0.5)
@@ -566,12 +606,12 @@ for(i in 1:length(tips)) {
     
     if (i == length(tips)) {
       axis(1, lwd = 0, lwd.tick = 1, at = 1:length(size), labels = size, las = 2)
-      mtext("n", side = 1, line = 2.5, las = 2)
+      mtext("n", side = 1, line = 2.5, las = 1)
     }
     
     if (j == 1) {
       axis(2, lwd = 0, lwd.tick = 1, las = 2)
-      mtext("set size", side = 2, line = 3)
+      mtext("absolute set size", side = 2, line = 3)
       mtext(paste0("c = ", this_c), side = 2, line = 5)
     }
     
@@ -584,3 +624,171 @@ for(i in 1:length(tips)) {
 }
 dev.off()
 
+
+
+
+##############################
+# bayes factor of true model #
+##############################
+
+pdf(paste0(figdir, "bayes_factor_true.pdf"), height = 12, width = 12)
+layout(layout_mat)
+par(mar=c(0,0,0,0), oma = c(4,6.5,2,0) + 0.1)
+
+# loop over rows
+for(i in 1:length(tips)) {
+  
+  this_c <- tips[i]
+  
+  # loop over columns
+  for(j in 1:length(factors)) {
+    
+    this_f <- factors[j]
+    
+    # get the relevant samples
+    these_summaries <- summaries[summaries$tips == this_c & summaries$factor == this_f,]
+    
+    # get the posterior of the true model
+    these_sizes      <- these_summaries$size
+    these_posteriors <- sapply(these_summaries$BF_per_site, head, n = 1)  
+    these_set_sizes  <- these_summaries$credible_set_size
+    these_included   <- these_summaries$included
+    df <- data.frame(n = these_sizes, p = these_posteriors, s = these_set_sizes)
+    
+    max <- 100
+    df$p[df$p > max] <- max
+    df$p[df$p < -max] <- -max
+    
+    # the vioplot
+    v <- vioplot(formula = p ~ n, 
+                 data    = df, 
+                 ylim    = c(-max, max),
+                 col     = paste0(colors,"50"),
+                 rectCol = NA, lineCol = NA, pchMed = NA, border = NA,
+                 names   = size, areaEqual = FALSE,
+                 xlab    = NA, ylab = NA, xaxt = "n", yaxt = "n")
+    
+    abline(h = 0, lty = 2)
+    
+    # the points
+    for(k in 1:length(size)) {
+      
+      # get base and height
+      if ( any(size[k] %in% df$n) == FALSE ) {
+        next
+      }
+      this_base   <- v$base[[k]]
+      this_height <- v$height[[k]]
+      
+      if ( all(is.na(this_height)) ) {
+        fun <- function(x) 1/3
+      } else {
+        # approximate function
+        fun <- approxfun(this_base, this_height)
+      }
+      
+      # get y coordinates
+      y <- df$p[df$n == size[k]]
+      
+      # get jitter factor per coordinate
+      jitter_factor <- fun(y)
+      x <- k + runif(length(y), -jitter_factor, jitter_factor)
+      
+      c <- colors[k]
+      w <- 0.5
+      
+      points(x, y, col = c, cex = w, pch = 19)
+      
+    }
+    
+    # if (j == 1) {
+    #   points(0 * size, pch = 3, col = col_theoretical, lwd = 2, lend = 2)
+    # }
+    
+    if (i == 1) {
+      mtext(paste0("f = ", this_f), side = 3, line = 0.5)
+    }
+    
+    if (i == length(tips)) {
+      axis(1, lwd = 0, lwd.tick = 1, at = 1:length(size), labels = size, las = 2)
+      mtext("n", side = 1, line = 2.5)
+    }
+    
+    if (j == 1) {
+      at <- pretty(c(-max, max))
+      lab <- paste0(at)
+      lab[1] <- paste0("<",lab[1])
+      lab[length(lab)] <- paste0(">",lab[length(lab)])
+      axis(2, lwd = 0, lwd.tick = 1, las = 2, at = at, label = lab)
+      mtext("2 ln BF(true)", side = 2, line = 3)
+      mtext(paste0("c = ", this_c), side = 2, line = 5)
+    }
+    
+    if (i == 1 & j == 1) {
+      legend("topleft", legend = size, col = colors, pch = 19, pt.cex = 1, bty = "n", title = "n")
+    }
+    
+  }
+  
+}
+dev.off()
+
+
+##############################
+# frequency that MAP is true #
+##############################
+
+pdf(paste0(figdir, "MAP_true.pdf"), height = 12, width = 12)
+layout(layout_mat)
+par(mar=c(0,0,0,0), oma = c(4,6.5,2,0) + 0.1)
+
+# loop over rows
+for(i in 1:length(tips)) {
+  
+  this_c <- tips[i]
+  
+  # loop over columns
+  for(j in 1:length(factors)) {
+    
+    this_f <- factors[j]
+    
+    # get the relevant samples
+    these_summaries <- summaries[summaries$tips == this_c & summaries$factor == this_f,]
+    
+    # get the posterior of the true model
+    is_map_true   <- these_summaries$map_is_true
+    map_true_freq <- sapply(split(is_map_true, these_summaries$size), mean)
+    
+    # the points
+    x <- size
+    y <- map_true_freq
+    w <- 1.0
+    
+    # plot
+    plot(which(size %in% names(y)), y, col = "black", cex = w, pch = NA, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n", ylim = c(0,1), type = "b")
+    # abline(h = 0.95, lty = 2)
+    points(which(size %in% names(y)), y, col = colors, cex = w, pch = 19, xlab = NA, ylab = NA, xaxt = "n", yaxt = "n", ylim = c(0,1), type = "p")
+    
+    if (i == 1) {
+      mtext(paste0("f = ", this_f), side = 3, line = 0.5)
+    }
+    
+    if (i == length(tips)) {
+      axis(1, lwd = 0, lwd.tick = 1, at = 1:length(size), labels = size, las = 2)
+      mtext("n", side = 1, line = 2.5)
+    }
+    
+    if (j == 1) {
+      axis(2, lwd = 0, lwd.tick = 1, las = 2)
+      mtext("P(MAP is true)", side = 2, line = 3)
+      mtext(paste0("c = ", this_c), side = 2, line = 5)
+    }
+    
+    if (i == 1 & j == 1) {
+      legend("bottomleft", legend = size, col = colors, pch = 19, pt.cex = 1, bty = "n", title = "n")
+    }
+    
+  }
+  
+}
+dev.off()

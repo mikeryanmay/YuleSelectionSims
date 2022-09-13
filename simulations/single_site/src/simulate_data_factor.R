@@ -38,7 +38,8 @@ invisible(mclapply(1:nrow(all_sims), function(i) {
   this_rep <- this_sim$rep
 
   # create the directory
-  dir <- paste0("factor/tips_", this_N, "_size_", this_L, "_factor_", this_f, "/rep_", this_rep)
+  dir <- paste0("factor2/tips_", this_N, "_size_", this_L, "_factor_", this_f, "/rep_", this_rep)
+  # dir <- paste0("factor/tips_", this_N, "_size_", this_L, "_factor_", this_f, "/rep_", this_rep)
   dir.create(dir, recursive = TRUE, showWarnings = FALSE)
 
   # check if tree already exists
@@ -75,7 +76,7 @@ invisible(mclapply(1:nrow(all_sims), function(i) {
   # write the data
   write.nexus(phy, file = paste0(dir, "/tree.nex"))
   write.nexus.data(aln, file = paste0(dir, "/seq.nex"))
-  
+    
   # make a plot
   pdf(paste0(dir,"/tree.pdf"))
   plot(phy, show.tip.label = FALSE, no.margin = TRUE)
