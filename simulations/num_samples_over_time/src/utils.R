@@ -1,3 +1,218 @@
+library(Rcpp)
+library(RcppEigen)
+
+cppFunction("
+#include <RcppEigen.h>
+
+// [[Rcpp::depends(RcppEigen)]]
+
+using Eigen::Map;                       // 'maps' rather than copies
+using Eigen::MatrixXd;                  // variable size matrix, double precision
+using Eigen::VectorXd;                  // variable size vector, double precision
+
+// [[Rcpp::export]]
+VectorXd colMax(Map<MatrixXd> M) {
+  return M.colwise().maxCoeff();
+}")
+
+cppFunction("
+#include <RcppEigen.h>
+
+// [[Rcpp::depends(RcppEigen)]]
+
+using Eigen::Map;                       // 'maps' rather than copies
+using Eigen::MatrixXd;                  // variable size matrix, double precision
+using Eigen::VectorXd;                  // variable size vector, double precision
+
+// [[Rcpp::export]]
+MatrixXd scaleMatrix(Map<MatrixXd> M, Map<VectorXd> D) {
+  MatrixXd R = M;
+  for(size_t i = 0; i < R.cols(); ++i) {
+    R.col(i) /= D(i);
+  }
+  return R;
+}")
+
+cppFunction("
+#include <RcppEigen.h>
+
+// [[Rcpp::depends(RcppEigen)]]
+
+using Eigen::Map;                       // 'maps' rather than copies
+using Eigen::MatrixXd;                  // variable size matrix, double precision
+using Eigen::VectorXd;                  // variable size vector, double precision
+
+// [[Rcpp::export]]
+MatrixXd computeTransitionProbability(Map<MatrixXd> U, Map<MatrixXd> Ui, Map<VectorXd> D) {
+  MatrixXd diag = D.asDiagonal();
+  return U * diag * Ui;
+}")
+
+cppFunction("
+#include <RcppEigen.h>
+
+// [[Rcpp::depends(RcppEigen)]]
+
+using Eigen::Map;                       // 'maps' rather than copies
+using Eigen::MatrixXd;                  // variable size matrix, double precision
+using Eigen::VectorXd;                  // variable size vector, double precision
+
+// [[Rcpp::export]]
+MatrixXd computeTransitionProbability2(Map<MatrixXd> U, Map<MatrixXd> Ui, Map<VectorXd> D, double t) {
+  // VectorXd exponential = (D * t).exp();
+  VectorXd exponential = D * t;
+  for(size_t i = 0; i < exponential.size(); ++i) {
+    exponential(i) = std::exp(exponential(i));
+  }
+  MatrixXd diag = exponential.asDiagonal();
+  return U * diag * Ui;
+}")
+
+drop.extinct <- function (phy, tol = NULL) {
+  if (!"phylo" %in% class(phy)) {
+    stop("\"phy\" is not of class \"phylo\".")
+  }
+  if (is.null(phy$edge.length)) {
+    stop("\"phy\" does not have branch lengths.")
+  }
+  if (is.null(tol)) {
+    tol <- min(phy$edge.length)/100
+  }
+  aa <- is.extinct(phy = phy, tol = tol)
+  if (length(aa) > 0) {
+    phy <- .drop.tip(phy, aa)
+  }
+  return(phy)
+}
+
+is.extinct <- function (phy, tol = NULL) {
+  if (!"phylo" %in% class(phy)) {
+    stop("\"phy\" is not of class \"phylo\".")
+  }
+  if (is.null(phy$edge.length)) {
+    stop("\"phy\" does not have branch lengths.")
+  }
+  if (is.null(tol)) {
+    tol <- min(phy$edge.length)/100
+  }
+  phy <- reorder(phy)
+  xx <- numeric(Ntip(phy) + phy$Nnode)
+  for (i in 1:length(phy$edge[, 1])) {
+    xx[phy$edge[i, 2]] <- xx[phy$edge[i, 1]] + phy$edge.length[i]
+  }
+  aa <- max(xx[1:Ntip(phy)]) - xx[1:Ntip(phy)] > tol
+  if (any(aa)) {
+    return(phy$tip.label[which(aa)])
+  }
+  else {
+    return(NULL)
+  }
+}
+
+.drop.tip <- function (phy, tip, trim.internal = TRUE, subtree = FALSE, root.edge = 0,
+                       rooted = is.rooted(phy))
+{
+  if (missing(tip))
+    return(phy)
+  if (is.character(tip))
+    tip <- which(phy$tip.label %in% tip)
+  if (!length(tip))
+    return(phy)
+  phy = as.phylo(phy)
+  Ntip <- length(phy$tip.label)
+  tip = tip[tip %in% c(1:Ntip)]
+  if (!length(tip))
+    return(phy)
+  phy <- reorder(phy)
+  NEWROOT <- ROOT <- Ntip + 1
+  Nnode <- phy$Nnode
+  Nedge <- nrow(phy$edge)
+  wbl <- !is.null(phy$edge.length)
+  edge1 <- phy$edge[, 1]
+  edge2 <- phy$edge[, 2]
+  keep <- !(edge2 %in% tip)
+  ints <- edge2 > Ntip
+  repeat {
+    sel <- !(edge2 %in% edge1[keep]) & ints & keep
+    if (!sum(sel))
+      break
+    keep[sel] <- FALSE
+  }
+  phy2 <- phy
+  phy2$edge <- phy2$edge[keep, ]
+  if (wbl)
+    phy2$edge.length <- phy2$edge.length[keep]
+  TERMS <- !(phy2$edge[, 2] %in% phy2$edge[, 1])
+  oldNo.ofNewTips <- phy2$edge[TERMS, 2]
+  n <- length(oldNo.ofNewTips)
+  idx.old <- phy2$edge[TERMS, 2]
+  phy2$edge[TERMS, 2] <- rank(phy2$edge[TERMS, 2])
+  phy2$tip.label <- phy2$tip.label[-tip]
+  if (!is.null(phy2$node.label))
+    phy2$node.label <- phy2$node.label[sort(unique(phy2$edge[,
+                                                             1])) - Ntip]
+  phy2$Nnode <- nrow(phy2$edge) - n + 1L
+  i <- phy2$edge > n
+  phy2$edge[i] <- match(phy2$edge[i], sort(unique(phy2$edge[i]))) +
+    n
+  storage.mode(phy2$edge) <- "integer"
+  collapse.singles(phy2)
+}
+
+makeYuleRateMatrixBinary <- function(S, fitness, phi, gamma) {
+  
+  # get the number of sites
+  num_sites <- length(S)
+  dim <- 2^num_sites + 1
+  
+  # enumerate all state combinations
+  state_combos <- expand.grid(lapply(1:num_sites, function(x) c("0","1")), stringsAsFactors = FALSE)
+  states <- c(apply(state_combos, 1, paste0, collapse = ""), "A")
+  
+  # create the rate matrix
+  M <- matrix(0, dim, dim)
+  rownames(M) <- colnames(M) <- states
+  for (i in 1:(dim-1)) {
+    
+    # get the fitness for this state
+    this_fitness <- fitness[i]
+    
+    # get the state
+    this_state <- states[i]
+    
+    # get the connected states
+    connected_states <- adist(this_state, states, costs = list("insertions" = Inf, "deletions" = Inf))[1,] == 1
+    
+    # fill in the mutation events
+    M[i, connected_states] <- gamma
+    
+    # speciation events and sampling events are transitions
+    # to an absorbing state
+    M[i, dim] <- this_fitness + phi
+    
+  }
+  
+  # fill in diagonals
+  diag(M) <- -rowSums(M)
+  
+  return(M)
+  
+}
+
+additiveFitnessFunctionBinary <- function(lambda0, delta) {
+  
+  fitness <- c("0" = lambda, "1" = lambda + delta)
+  return(fitness)
+  
+}
+
+multiplicativeFitnessFunctionBinary <- function(lambda0, delta) {
+  
+  fitness <- c("0" = lambda, "1" = lambda * delta)
+  return(fitness)
+  
+}
+
 getSampleData <- function(tree, seq) {
 
   # get ages from tree

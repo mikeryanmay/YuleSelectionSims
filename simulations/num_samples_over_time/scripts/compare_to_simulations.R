@@ -3,14 +3,14 @@
 library(microbenchmark)
 library(TESS)
 
-source("src/countClass.R")
+source("../../src/countClass.R", chdir = TRUE)
 
 # settings
 lambda0 <- 0.25
 lambda1 <- 2 * lambda0
 phi     <- 0
 gamma   <- 0.05
-t       <- 7
+t       <- 5
 
 # simulate
 reps <- 1000000

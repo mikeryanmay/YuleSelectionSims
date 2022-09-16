@@ -213,7 +213,7 @@ additiveFitnessFunction <- function(S, lambda0, delta) {
   
   # compute the fitness for each state
   fitness <- apply(state_combos, 1, function(x) {
-    lambda0 * prod(ifelse(x == S, delta, 1))
+    lambda0 + delta * sum(x == S)
   })
   names(fitness) <- states
   
