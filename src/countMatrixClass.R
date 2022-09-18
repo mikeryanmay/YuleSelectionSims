@@ -168,14 +168,14 @@ countMatrixModel <- setRefClass(
       
       # make an empty matrix
       Q <<- Matrix(data = 0, nrow = num_states, ncol = num_states, dimnames = list(labels, labels), sparse = TRUE)
-      # J <<- Matrix(data = 0, nrow = num_states, ncol = num_states, dimnames = list(labels, labels), sparse = TRUE)
+      J <<- Matrix(data = 0, nrow = num_states, ncol = num_states, dimnames = list(labels, labels), sparse = TRUE)
       
       # update the matrix
       updateAll()
       
     },
     
-    solve = function(p, t, method = "ode45", ...) {
+    solve = function(p, t, method = "ode45", atol = 1e-16, rtol = 1e-16, ...) {
       
       # make sure matrix is up to date
       updateAll()
@@ -184,85 +184,116 @@ countMatrixModel <- setRefClass(
         
         # matrix exponentiate
         new_p <- (p %*% expm.Higham08(Q * t, balancing = FALSE))[1,]
+        # new_p <- (expm.Higham08(Q * t, balancing = FALSE) %*% t(t(p)))[,1]
         
       } else if ( method == "pracma" ) {
         
         # solve with pracma ode45
         new_p <- ode45(function(t, y, ...) {
           as.matrix(y[,1] %*% Q)
-        }, t0 = 0, tfinal = t, y0 = p, ...)
+        }, t0 = 0, tfinal = t, y0 = p, rtol = rtol, atol = atol, ...)
         new_p <- new_p$y[nrow(new_p$y),]
         names(new_p) <- labels
         
-      } else if ( method == "lsoda" ) {
-        
-        new_p <- deSolve::lsoda(y = p, times = c(0, t), func = function(t, y, ...) {
-          list((y %*% Q)[1,])
-        }, parms = list(), jacfunc = function(t, y, parms) { return(J) },...)
-        new_p <- new_p[nrow(new_p),-1]
-        
       } else if ( method == "lsode" ) {
         
-        # solve with deSolve lsodes
-        new_p <- deSolve::lsode(y = p, times = c(0, t), func = function(t, y, ...) {
+        new_p <- deSolve::ode(y = p, times = c(0, t), func = function(t, y, ...) {
           list((y %*% Q)[1,])
-        }, parms = list(), jacfunc = function(t, y, parms) { return(J) }, ...)
+        }, rtol = rtol, atol = atol, method = "lsode", mf = 21, jactype = "fullusr", jacfunc = function(t, y, parms) { return(as.matrix(J)) }, parms = list(), ...)
         new_p <- new_p[nrow(new_p),-1]
         
       } else if ( method == "lsodes" ) {
-        
-        # solve with deSolve lsodes
-        new_p <- deSolve::lsodes(y = p, times = c(0, t), func = function(t, y, ...) {
+
+        new_p <- deSolve::ode(y = p, times = c(0, t), func = function(t, y, ...) {
           list((y %*% Q)[1,])
-        }, parms = list(), jacvec = function(t, y, j, parms) { return(J[,j]) }, ...)
+        }, rtol = rtol, atol = atol, method = "lsodes", jacvec = function(t, y, j, parms) { return(J[,j]) }, parms = list(), ...)
         new_p <- new_p[nrow(new_p),-1]
-        
+                
       } else if ( method == "radau" ) {
         
-        # solve with deSolve lsodes
-        new_p <- deSolve::radau(y = p, times = c(0, t), func = function(t, y, ...) {
-          list((y %*% Q)[1,])
-        }, parms = list(), jacfunc = function(t, y, parms) { return(J) }, ...)
-        new_p <- new_p[nrow(new_p),-1]
-        
-      } else if ( method == "ode45" ) {
-        
-        # solve with deSolve ode45
         new_p <- deSolve::ode(y = p, times = c(0, t), func = function(t, y, ...) {
           list((y %*% Q)[1,])
-        }, method = "ode45", parms = list(), ...)
-        new_p <- new_p[nrow(new_p),-1]
-        
-      } else if ( method == "ode23" ) {
-        
-        # solve with deSolve ode45
-        new_p <- deSolve::ode(y = p, times = c(0, t), func = function(t, y, ...) {
-          list((y %*% Q)[1,])
-        }, method = "ode23", parms = list(), ...)
-        new_p <- new_p[nrow(new_p),-1]
-        
-      } else if ( method == "impAdams" ) {
-        
-        # solve with deSolve lsodes
-        new_p <- deSolve::lsode(y = p, times = c(0, t), func = function(t, y, ...) {
-          list((y %*% Q)[1,])
-        }, parms = list(), jacfunc = function(t, y, parms) { return(J) }, ...)
-        new_p <- new_p[nrow(new_p),-1]
-        
-      } else if ( method == "rk4" ) {
-        
-        # solve with deSolve rk4
-        new_p <- deSolve::ode(y = p, times = c(0, t), func = function(t, y, ...) {
-          list((y %*% Q)[1,])
-        }, method = "rk4", parms = list(), ...)
+        }, rtol = rtol, atol = atol, method = "radau", jactype = "fullusr", jacfunc = function(t, y, parms) { return(as.matrix(J)) }, parms = list(), ...)
         new_p <- new_p[nrow(new_p),-1]
         
       } else {
-        stop("Choose a different method")
+
+        new_p <- suppressWarnings(deSolve::ode(y = p, times = c(0, t), func = function(t, y, ...) {
+          list((y %*% Q)[1,])
+        }, rtol = rtol, atol = atol, method = method, parms = list(), ...))
+        new_p <- new_p[nrow(new_p),-1]
+        
       }
       
+      # else if ( method == "lsoda" ) {
+      #   
+      #   new_p <- deSolve::lsoda(y = p, times = c(0, t), func = function(t, y, ...) {
+      #     list((y %*% Q)[1,])
+      #   }, parms = list(), jacfunc = function(t, y, parms) { return(J) },...)
+      #   new_p <- new_p[nrow(new_p),-1]
+      #   
+      # } else if ( method == "lsode" ) {
+      #   
+      #   # solve with deSolve lsodes
+      #   new_p <- deSolve::lsode(y = p, times = c(0, t), func = function(t, y, ...) {
+      #     list((y %*% Q)[1,])
+      #   }, parms = list(), jacfunc = function(t, y, parms) { return(J) }, ...)
+      #   new_p <- new_p[nrow(new_p),-1]
+      #   
+      # } else if ( method == "lsodes" ) {
+      #   
+      #   # solve with deSolve lsodes
+      #   new_p <- deSolve::lsodes(y = p, times = c(0, t), func = function(t, y, ...) {
+      #     list((y %*% Q)[1,])
+      #   }, parms = list(), jacvec = function(t, y, j, parms) { return(J[,j]) }, ...)
+      #   new_p <- new_p[nrow(new_p),-1]
+      #   
+      # } else if ( method == "radau" ) {
+      #   
+      #   # solve with deSolve lsodes
+      #   new_p <- deSolve::radau(y = p, times = c(0, t), func = function(t, y, ...) {
+      #     list((y %*% Q)[1,])
+      #   }, parms = list(), jacfunc = function(t, y, parms) { return(J) }, ...)
+      #   new_p <- new_p[nrow(new_p),-1]
+      #   
+      # } else if ( method == "ode45" ) {
+      #   
+      #   # solve with deSolve ode45
+      #   new_p <- deSolve::ode(y = p, times = c(0, t), func = function(t, y, ...) {
+      #     list((y %*% Q)[1,])
+      #   }, method = "ode45", parms = list(), ...)
+      #   new_p <- new_p[nrow(new_p),-1]
+      #   
+      # } else if ( method == "ode23" ) {
+      #   
+      #   # solve with deSolve ode45
+      #   new_p <- deSolve::ode(y = p, times = c(0, t), func = function(t, y, ...) {
+      #     list((y %*% Q)[1,])
+      #   }, method = "ode23", parms = list(), ...)
+      #   new_p <- new_p[nrow(new_p),-1]
+      #   
+      # } else if ( method == "impAdams" ) {
+      #   
+      #   # solve with deSolve lsodes
+      #   new_p <- deSolve::lsode(y = p, times = c(0, t), func = function(t, y, ...) {
+      #     list((y %*% Q)[1,])
+      #   }, parms = list(), jacfunc = function(t, y, parms) { return(J) }, ...)
+      #   new_p <- new_p[nrow(new_p),-1]
+      #   
+      # } else if ( method == "rk4" ) {
+      #   
+      #   # solve with deSolve rk4
+      #   new_p <- deSolve::ode(y = p, times = c(0, t), func = function(t, y, ...) {
+      #     list((y %*% Q)[1,])
+      #   }, method = "rk4", parms = list(), ...)
+      #   new_p <- new_p[nrow(new_p),-1]
+      #   
+      # } else {
+      #   stop("Choose a different method")
+      # }
+      
       # truncate at 0
-      new_p <- pmax(new_p, 0)
+      # new_p <- pmax(new_p, 0)
       
       return(new_p)
       
@@ -295,7 +326,7 @@ countMatrixModel <- setRefClass(
     
     populateLambda0 = function() {
       Q[lambda0_indexes] <<- lambda0 * lambda0_factors
-      # J[lambda0_indexes[,2:1]] <<- lambda0 * lambda0_factors
+      J[lambda0_indexes[,2:1]] <<- lambda0 * lambda0_factors
     },
     
     setLambda1 = function(lambda1_) {
@@ -313,7 +344,7 @@ countMatrixModel <- setRefClass(
     
     populateLambda1 = function() {
       Q[lambda1_indexes] <<- lambda1 * lambda1_factors
-      # J[lambda1_indexes[,2:1]] <<- lambda1 * lambda1_factors
+      J[lambda1_indexes[,2:1]] <<- lambda1 * lambda1_factors
     },
     
     setPhi = function(phi_) {
@@ -336,7 +367,7 @@ countMatrixModel <- setRefClass(
     
     populateGamma01 = function() {
       Q[gamma01_indexes] <<- gamma01 * gamma01_factors
-      # J[gamma01_indexes[,2:1]] <<- gamma01 * gamma01_factors
+      J[gamma01_indexes[,2:1]] <<- gamma01 * gamma01_factors
     },
     
     setGamma10 = function(gamma10_) {
@@ -354,7 +385,7 @@ countMatrixModel <- setRefClass(
     
     populateGamma10 = function() {
       Q[gamma10_indexes] <<- gamma10 * gamma10_factors
-      # J[gamma10_indexes[,2:1]] <<- gamma10 * gamma10_factors
+      J[gamma10_indexes[,2:1]] <<- gamma10 * gamma10_factors
     },
     
     updateDiagonal = function() {
@@ -369,7 +400,7 @@ countMatrixModel <- setRefClass(
         (lambda0 + gamma01) * states[,1]    + # speciation or mutation in state 0 
         (lambda1 + gamma10) * states[,2]      # speciation or mutation in state 1 
       diag(Q) <<- -leaving_rate
-      # diag(J) <<- -leaving_rate
+      diag(J) <<- -leaving_rate
     }
     
   )

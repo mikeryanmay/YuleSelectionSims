@@ -1,14 +1,14 @@
 # setwd("simulations/num_samples_over_time/")
 library(cubature)
-source("src/countClass.R")
+source("../../src/countClass.R", chdir = TRUE)
 
 # settings
 r0      <- 2.5
 phi     <- 0.2
 lambda0 <- r0 * phi
 lambda1 <- 2.5 * lambda0
-gamma   <- 0.05
-nmax    <- 10
+gamma   <- 0.5
+nmax    <- 3
 
 # the data
 t0 <- 0   # start time
@@ -18,7 +18,7 @@ t3 <- 1.5 # time of third sample
 
 x0 <- "0" # state of the original lineage
 x1 <- "0" # state of sample at time t1
-x2 <- "0" # state of sample at time t2
+x2 <- "1" # state of sample at time t2
 x3 <- "1" # state of sample at time t3
 
 ################################
@@ -26,7 +26,7 @@ x3 <- "1" # state of sample at time t3
 ################################
 
 # make the matrices
-Q  <- countMatrixModel(nmax, lambda0, lambda1, phi, gamma, gamma)
+Q  <- countMatrixModel(nmax, lambda0, lambda1, phi, gamma / 3, gamma)
 R1 <- sampleMatrixModel(nmax, phi, x1)
 R2 <- sampleMatrixModel(nmax, phi, x2)
 
@@ -69,7 +69,7 @@ lik_count <- as.numeric(p[end_state])
 Q <- matrix(0, 3, 3, dimnames = list(c("0","1","A"), c("0","1","A")))
 
 # mutation events
-Q["0", "1"] <- gamma
+Q["0", "1"] <- gamma / 3
 Q["1", "0"] <- gamma
 
 # all other events
@@ -116,7 +116,7 @@ tree_likelihood_1 <- function(a1, a2, Q) {
   
   # transition along stem branch
   stem_bl <- a1 - t0
-  stem_cl <- sum( (transitionProbability(stem_bl) %*% x0_cond_probs)[,1] * a1_cl)
+  stem_cl <- sum((transitionProbability(stem_bl) %*% x0_cond_probs)[,1] * a1_cl)
   
   # return
   return(stem_cl)
@@ -143,7 +143,7 @@ tree_likelihood_2 <- function(a1, a2, Q) {
   
   # transition along stem branch
   stem_bl <- a1 - t0
-  stem_cl <- sum( (transitionProbability(stem_bl) %*% x0_cond_probs)[,1] * a1_cl)
+  stem_cl <- sum((transitionProbability(stem_bl) %*% x0_cond_probs)[,1] * a1_cl)
   
   # return
   return(stem_cl)
@@ -168,7 +168,7 @@ tree_likelihood_3 <- function(a1, a2, Q) {
   
   # transition along stem branch
   stem_bl <- a1 - t0
-  stem_cl <- sum( (transitionProbability(stem_bl) %*% x0_cond_probs)[,1] * a1_cl)
+  stem_cl <- sum((transitionProbability(stem_bl) %*% x0_cond_probs)[,1] * a1_cl)
   
   # return
   return(stem_cl)
@@ -176,7 +176,7 @@ tree_likelihood_3 <- function(a1, a2, Q) {
 }
 
 # integrate for tree 1
-tol <- 1e-10
+tol <- 1e-16
 int_tree_1 <- integral2(function(x, y) {
   
   cat("*")
@@ -230,7 +230,8 @@ lik_tree; lik_count
 lik_tree / lik_count
 sprintf("%.15f", lik_tree - lik_count)
 
-
+log(lik_tree)
+log(lik_count)
 
 
 

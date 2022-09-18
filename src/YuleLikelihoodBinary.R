@@ -87,6 +87,19 @@ YuleLikelihoodBinary <- setRefClass(
       
     },
     
+    setTree = function(tree_) {
+      
+      # set the tree
+      tree <<- tree_
+      
+      # update the edge matrix
+      edge_matrix$bl <<- c(tree$root.edge, tree$edge.length)
+      
+      # set likelihood as dirty
+      sel_lik_dirty <<- TRUE
+      
+    },
+    
     initSelectedSitesContainers = function() {
       
       # make the matrix
@@ -239,7 +252,7 @@ YuleLikelihoodBinary <- setRefClass(
         this_CL <- this_P %*% desc_CL
         
         # accumulate probability at the origin
-        selected_site_log_likelihood <<- log(mean(this_CL[fitnesses == lambda0])) + sel_rescale_log
+        selected_site_log_likelihood <<- log(this_CL[1]) + sel_rescale_log
         
         # update the dirty flag
         sel_lik_dirty <<- FALSE

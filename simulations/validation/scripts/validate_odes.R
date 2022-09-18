@@ -39,8 +39,8 @@ bar <- txtProgressBar(style = 3, width = 40)
 for(i in 2:nt) {
   
   # integrate one time step
-  p <- Q$solve(p, dt, atol = 1e-12, rtol = 1e-12)
-  # p <- Q$solve(p, dt, method = "Higham08", atol = 1e-12, rtol = 1e-12)
+  # p <- Q$solve(p, dt, atol = 1e-12, rtol = 1e-12)
+  p <- Q$solve(p, dt, method = "Higham08", atol = 1e-12, rtol = 1e-12)
   
   # store result
   int_p[i,] <- p
